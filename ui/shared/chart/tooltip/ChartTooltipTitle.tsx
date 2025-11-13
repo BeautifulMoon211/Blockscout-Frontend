@@ -2,15 +2,10 @@ import { useToken } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import React from 'react';
 
-import { Resolution } from '@blockscout/stats-types';
-
-import { STATS_RESOLUTIONS } from 'ui/stats/constants';
-
 import ChartTooltipRow from './ChartTooltipRow';
 
-const ChartTooltipTitle = ({ resolution = Resolution.DAY }: { resolution?: Resolution }) => {
+const ChartTooltipTitle = () => {
   const titleColor = useToken('colors', 'yellow.300');
-  const resolutionTitle = STATS_RESOLUTIONS.find(r => r.id === resolution)?.title || 'day';
 
   return (
     <ChartTooltipRow lineNum={ 0 }>
@@ -21,7 +16,7 @@ const ChartTooltipTitle = ({ resolution = Resolution.DAY }: { resolution?: Resol
         opacity={ 0 }
         dominantBaseline="hanging"
       >
-        { `Incomplete ${ resolutionTitle.toLowerCase() }` }
+        Incomplete day
       </text>
     </ChartTooltipRow>
   );

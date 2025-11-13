@@ -1,10 +1,9 @@
 import type { ResponsiveValue } from '@chakra-ui/react';
-import { chakra, Image, Tag } from '@chakra-ui/react';
+import { chakra, Image, Skeleton, Tag } from '@chakra-ui/react';
 import React from 'react';
 
 import type { EntityTag as TEntityTag } from './types';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import IconSvg from 'ui/shared/IconSvg';
 import TruncatedValue from 'ui/shared/TruncatedValue';
 
@@ -16,16 +15,15 @@ interface Props {
   data: TEntityTag;
   isLoading?: boolean;
   maxW?: ResponsiveValue<string>;
-  noLink?: boolean;
 }
 
-const EntityTag = ({ data, isLoading, maxW, noLink }: Props) => {
+const EntityTag = ({ data, isLoading, maxW }: Props) => {
 
   if (isLoading) {
     return <Skeleton borderRadius="sm" w="100px" h="24px"/>;
   }
 
-  const hasLink = !noLink && Boolean(getTagLinkParams(data));
+  const hasLink = Boolean(getTagLinkParams(data));
   const iconColor = data.meta?.textColor ?? 'gray.400';
 
   const name = (() => {
@@ -65,7 +63,7 @@ const EntityTag = ({ data, isLoading, maxW, noLink }: Props) => {
         colorScheme={ hasLink ? 'gray-blue' : 'gray' }
         _hover={ hasLink ? { opacity: 0.76 } : undefined }
       >
-        <EntityTagLink data={ data } noLink={ noLink }>
+        <EntityTagLink data={ data }>
           { icon }
           <TruncatedValue value={ name } tooltipPlacement="top"/>
         </EntityTagLink>

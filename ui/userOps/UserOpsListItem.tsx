@@ -1,9 +1,9 @@
+import { Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type { UserOpsItem } from 'types/api/userOps';
 
 import config from 'configs/app';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import CurrencyValue from 'ui/shared/CurrencyValue';
 import AddressStringOrParam from 'ui/shared/entities/address/AddressStringOrParam';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
@@ -74,7 +74,7 @@ const UserOpsListItem = ({ item, isLoading, showTx, showSender }: Props) => {
       <ListItemMobileGrid.Label isLoading={ isLoading }>Block</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         <BlockEntity
-          number={ Number(item.block_number) }
+          number={ item.block_number }
           isLoading={ isLoading }
           fontSize="sm"
           lineHeight={ 5 }

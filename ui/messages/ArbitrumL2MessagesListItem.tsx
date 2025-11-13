@@ -1,10 +1,9 @@
-import { chakra } from '@chakra-ui/react';
+import { Skeleton, chakra } from '@chakra-ui/react';
 import React from 'react';
 
 import type { ArbitrumL2MessagesItem } from 'types/api/arbitrumL2';
 
 import config from 'configs/app';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
@@ -34,15 +33,13 @@ const ArbitrumL2MessagesListItem = ({ item, isLoading, direction }: Props) => {
         <>
           <ListItemMobileGrid.Label isLoading={ isLoading }>L1 block</ListItemMobileGrid.Label>
           <ListItemMobileGrid.Value>
-            { item.origination_transaction_block_number ? (
-              <BlockEntityL1
-                number={ item.origination_transaction_block_number }
-                isLoading={ isLoading }
-                fontSize="sm"
-                lineHeight={ 5 }
-                fontWeight={ 600 }
-              />
-            ) : <chakra.span>N/A</chakra.span> }
+            <BlockEntityL1
+              number={ item.origination_transaction_block_number }
+              isLoading={ isLoading }
+              fontSize="sm"
+              lineHeight={ 5 }
+              fontWeight={ 600 }
+            />
           </ListItemMobileGrid.Value>
         </>
       ) }
@@ -87,18 +84,14 @@ const ArbitrumL2MessagesListItem = ({ item, isLoading, direction }: Props) => {
         ) }
       </ListItemMobileGrid.Value>
 
-      { item.origination_timestamp && (
-        <>
-          <ListItemMobileGrid.Label isLoading={ isLoading }>Age</ListItemMobileGrid.Label>
-          <ListItemMobileGrid.Value>
-            <TimeAgoWithTooltip
-              timestamp={ item.origination_timestamp }
-              isLoading={ isLoading }
-              display="inline-block"
-            />
-          </ListItemMobileGrid.Value>
-        </>
-      ) }
+      <ListItemMobileGrid.Label isLoading={ isLoading }>Age</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Value>
+        <TimeAgoWithTooltip
+          timestamp={ item.origination_timestamp }
+          isLoading={ isLoading }
+          display="inline-block"
+        />
+      </ListItemMobileGrid.Value>
 
       <ListItemMobileGrid.Label isLoading={ isLoading }>Status</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>

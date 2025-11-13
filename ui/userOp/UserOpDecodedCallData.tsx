@@ -23,22 +23,21 @@ const UserOpDecodedCallData = ({ data }: Props) => {
     return null;
   }
 
-  const toggler = data.decoded_call_data && data.decoded_execute_call_data ? (
+  const toggler = data.decoded_call_data ? (
     <UserOpCallDataSwitch
       onChange={ handleSwitchChange }
-      initialValue={ false }
+      initialValue={ !data.decoded_execute_call_data }
+      isDisabled={ !data.decoded_execute_call_data }
       ml={{ base: 0, lg: 'auto' }}
     />
   ) : null;
 
-  const labelText = data.call_data && !data.execute_call_data ? 'Decoded external call data' : 'Decoded call data';
-
   return (
     <>
       <DetailsInfoItem.Label
-        hint={ labelText }
+        hint="Decoded call data"
       >
-        { labelText }
+        Decoded call data
       </DetailsInfoItem.Label>
       <DetailsInfoItem.Value
         flexDir={{ base: 'column', lg: 'row' }}

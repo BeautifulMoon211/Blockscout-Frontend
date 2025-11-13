@@ -1,7 +1,5 @@
 import type { TxInterpretationResponse } from 'types/api/txInterpretation';
 
-import { hash } from 'mocks/address/address';
-
 export const txInterpretation: TxInterpretationResponse = {
   data: {
     summaries: [ {
@@ -27,7 +25,7 @@ export const txInterpretation: TxInterpretationResponse = {
         to_address: {
           type: 'address',
           value: {
-            hash: hash,
+            hash: '0x48c04ed5691981C42154C6167398f95e8f38a7fF',
             implementations: null,
             is_contract: false,
             is_verified: false,

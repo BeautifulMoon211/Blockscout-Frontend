@@ -113,11 +113,11 @@ export interface NovesDescribeResponse {
   description: string;
 }
 
-export type NovesDescribeTxsResponse = {
+export interface NovesDescribeTxsResponse {
   txHash: string;
   type: string;
   description: string;
-};
+}[];
 
 export interface NovesTxTranslation {
   data?: NovesDescribeTxsResponse;

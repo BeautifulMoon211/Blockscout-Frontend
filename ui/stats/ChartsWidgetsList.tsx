@@ -1,4 +1,4 @@
-import { Box, Grid, Heading, List, ListItem } from '@chakra-ui/react';
+import { Box, Grid, Heading, List, ListItem, Skeleton } from '@chakra-ui/react';
 import React, { useCallback, useState } from 'react';
 
 import type * as stats from '@blockscout/stats-types';
@@ -6,7 +6,6 @@ import type { StatsIntervalIds } from 'types/client/stats';
 
 import useApiQuery from 'lib/api/useApiQuery';
 import { apos } from 'lib/html-entities';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import EmptySearchResult from 'ui/shared/EmptySearchResult';
 import GasInfoTooltip from 'ui/shared/gas/GasInfoTooltip';
 import IconSvg from 'ui/shared/IconSvg';
@@ -21,7 +20,7 @@ type Props = {
   isPlaceholderData: boolean;
   charts?: Array<stats.LineChartSection>;
   interval: StatsIntervalIds;
-};
+}
 
 const ChartsWidgetsList = ({ filterQuery, isError, isPlaceholderData, charts, interval, initialFilterQuery }: Props) => {
   const [ isSomeChartLoadingError, setIsSomeChartLoadingError ] = useState(false);
@@ -96,7 +95,6 @@ const ChartsWidgetsList = ({ filterQuery, isError, isPlaceholderData, charts, in
                     units={ chart.units || undefined }
                     isPlaceholderData={ isPlaceholderData }
                     onLoadingError={ handleChartLoadingError }
-                    href={{ pathname: '/stats/[id]', query: { id: chart.id } }}
                   />
                 )) }
               </Grid>

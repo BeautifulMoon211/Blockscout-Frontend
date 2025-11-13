@@ -1,4 +1,4 @@
-import { Text, PopoverTrigger, PopoverBody, PopoverContent, useDisclosure, useOutsideClick, Box } from '@chakra-ui/react';
+import { Text, PopoverTrigger, PopoverBody, PopoverContent, useDisclosure, Skeleton, useOutsideClick, Box } from '@chakra-ui/react';
 import React from 'react';
 
 import type { AppRating } from 'types/client/marketplace';
@@ -6,7 +6,6 @@ import type { AppRating } from 'types/client/marketplace';
 import config from 'configs/app';
 import type { EventTypes, EventPayload } from 'lib/mixpanel/index';
 import Popover from 'ui/shared/chakra/Popover';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 
 import Content from './PopoverContent';
 import Stars from './Stars';
@@ -52,7 +51,6 @@ const Rating = ({
         <>
           <Stars filledIndex={ (rating?.value || 0) - 1 }/>
           <Text fontSize="md" ml={ 2 }>{ rating?.value }</Text>
-          { rating?.count && <Text variant="secondary" fontSize="md" ml={ 1 }>({ rating?.count })</Text> }
         </>
       ) }
       <Box ref={ popoverRef }>
@@ -60,7 +58,6 @@ const Rating = ({
           <PopoverTrigger>
             <TriggerButton
               rating={ rating?.value }
-              count={ rating?.count }
               fullView={ fullView }
               isActive={ isOpen }
               onClick={ onToggle }

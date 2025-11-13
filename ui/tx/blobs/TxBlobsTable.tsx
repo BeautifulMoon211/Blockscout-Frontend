@@ -16,7 +16,7 @@ interface Props {
 const TxInternalsTable = ({ data, top, isLoading }: Props) => {
 
   return (
-    <Table>
+    <Table variant="simple" size="sm">
       <Thead top={ top }>
         <Tr>
           <Th width="60%">Blob hash</Th>

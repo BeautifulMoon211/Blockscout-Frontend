@@ -2,14 +2,11 @@ import { Heading } from '@chakra-ui/react';
 import React from 'react';
 
 import config from 'configs/app';
-import LatestOptimisticDeposits from 'ui/home/latestDeposits/LatestOptimisticDeposits';
+import useHasAccount from 'lib/hooks/useHasAccount';
+import LatestDeposits from 'ui/home/LatestDeposits';
 import LatestTxs from 'ui/home/LatestTxs';
 import LatestWatchlistTxs from 'ui/home/LatestWatchlistTxs';
 import TabsWithScroll from 'ui/shared/Tabs/TabsWithScroll';
-import useAuth from 'ui/snippets/auth/useIsAuth';
-
-import LatestArbitrumDeposits from './latestDeposits/LatestArbitrumDeposits';
-
 const rollupFeature = config.features.rollup;
 
 const TAB_LIST_PROPS = {
@@ -17,15 +14,12 @@ const TAB_LIST_PROPS = {
 };
 
 const TransactionsHome = () => {
-  const isAuth = useAuth();
-  if ((rollupFeature.isEnabled && (rollupFeature.type === 'optimistic' || rollupFeature.type === 'arbitrum')) || isAuth) {
+  const hasAccount = useHasAccount();
+  if ((rollupFeature.isEnabled && rollupFeature.type === 'optimistic') || hasAccount) {
     const tabs = [
       { id: 'txn', title: 'Latest txn', component: <LatestTxs/> },
-      rollupFeature.isEnabled && rollupFeature.type === 'optimistic' &&
-        { id: 'deposits', title: 'Deposits (L1→L2 txn)', component: <LatestOptimisticDeposits/> },
-      rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' &&
-        { id: 'deposits', title: 'Deposits (L1→L2 txn)', component: <LatestArbitrumDeposits/> },
-      isAuth && { id: 'watchlist', title: 'Watch list', component: <LatestWatchlistTxs/> },
+      rollupFeature.isEnabled && rollupFeature.type === 'optimistic' && { id: 'deposits', title: 'Deposits (L1→L2 txn)', component: <LatestDeposits/> },
+      hasAccount && { id: 'watchlist', title: 'Watch list', component: <LatestWatchlistTxs/> },
     ].filter(Boolean);
     return (
       <>

@@ -13,12 +13,12 @@ const variantSoftRounded = definePartsStyle((props) => {
     tab: {
       borderRadius: 'base',
       fontWeight: '600',
-      color: mode('blue.700', 'gray.400')(props),
+      color: mode('#3f37c9', 'gray.400')(props),
       _selected: {
-        color: mode('blue.700', 'gray.50')(props),
-        bg: mode('blue.50', 'gray.800')(props),
+        color: mode('#3f37c9', 'gray.50')(props),
+        bg: mode('#aaf2ff', 'gray.800')(props),
         _hover: {
-          color: mode('blue.700', 'gray.50')(props),
+          color: mode('#3f37c9', 'gray.50')(props),
         },
       },
       _hover: {
@@ -41,30 +41,6 @@ const variantOutline = definePartsStyle((props) => {
   };
 });
 
-const variantRadioGroup = definePartsStyle((props) => {
-  return {
-    tab: {
-      ...Button.baseStyle,
-      ...Button.variants?.radio_group(props),
-      _selected: Button.variants?.radio_group(props)?.[`
-      &[data-selected=true],
-      &[data-selected=true][aria-selected=true]
-    `],
-      borderRadius: 'none',
-      '&[role="tab"]': {
-        _first: {
-          borderTopLeftRadius: 'base',
-          borderBottomLeftRadius: 'base',
-        },
-        _last: {
-          borderTopRightRadius: 'base',
-          borderBottomRightRadius: 'base',
-        },
-      },
-    },
-  };
-});
-
 const sizes = {
   sm: definePartsStyle({
     tab: Button.sizes?.sm,
@@ -77,7 +53,6 @@ const sizes = {
 const variants = {
   'soft-rounded': variantSoftRounded,
   outline: variantOutline,
-  radio_group: variantRadioGroup,
 };
 
 const Tabs = defineMultiStyleConfig({

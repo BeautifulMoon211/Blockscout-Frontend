@@ -4,15 +4,14 @@ import React from 'react';
 interface Props {
   title: string;
   children: React.ReactNode;
-  disableScroll?: boolean;
 }
 
-const ContractVerificationMethod = ({ title, children, disableScroll }: Props) => {
+const ContractVerificationMethod = ({ title, children }: Props) => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    !disableScroll && ref.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [ disableScroll ]);
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
     <section ref={ ref }>

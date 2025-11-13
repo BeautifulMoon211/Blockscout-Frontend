@@ -10,11 +10,11 @@ import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 type Props = {
   onClick: (kw: string) => void;
   onClear: () => void;
-};
+}
 
 const SearchBarSuggest = ({ onClick, onClear }: Props) => {
   const isMobile = useIsMobile();
-  const bgHoverColor = useColorModeValue('blue.50', 'gray.800');
+  const bgHoverColor = useColorModeValue('#aaf2ff', 'gray.800');
 
   const [ keywords, setKeywords ] = React.useState<Array<string>>(getRecentSearchKeywords());
 

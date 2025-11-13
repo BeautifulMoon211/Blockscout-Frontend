@@ -1,10 +1,10 @@
+import { Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type * as bens from '@blockscout/bens-types';
 
 import dayjs from 'lib/date/dayjs';
 import NameDomainExpiryStatus from 'ui/nameDomain/NameDomainExpiryStatus';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import ListItemMobileGrid from 'ui/shared/ListItemMobile/ListItemMobileGrid';
@@ -25,7 +25,7 @@ const NameDomainsListItem = ({
     <ListItemMobileGrid.Container>
       <ListItemMobileGrid.Label isLoading={ isLoading }>Domain</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
-        <EnsEntity domain={ name } protocol={ protocol } isLoading={ isLoading } fontWeight={ 500 }/>
+        <EnsEntity name={ name } protocol={ protocol } isLoading={ isLoading } fontWeight={ 500 }/>
       </ListItemMobileGrid.Value>
 
       { resolvedAddress && (

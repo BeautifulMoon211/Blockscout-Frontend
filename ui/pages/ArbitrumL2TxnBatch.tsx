@@ -108,7 +108,7 @@ const ArbitrumL2TxnBatch = () => {
     }
 
     return {
-      label: 'Back to txn batches list',
+      label: 'Back to tx batches list',
       url: appProps.referrer,
     };
   }, [ appProps.referrer ]);
@@ -117,7 +117,7 @@ const ArbitrumL2TxnBatch = () => {
     <>
       <TextAd mb={ 6 }/>
       <PageTitle
-        title={ `Txn batch #${ number }` }
+        title={ `Tx batch #${ number }` }
         backLink={ backLink }
       />
       { batchQuery.isPlaceholderData ?

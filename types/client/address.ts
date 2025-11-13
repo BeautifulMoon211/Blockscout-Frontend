@@ -12,8 +12,4 @@ export type CsvExportParams = {
   type: 'holders';
   filterType?: undefined;
   filterValue?: undefined;
-} | {
-  type: 'epoch-rewards';
-  filterType?: undefined;
-  filterValue?: undefined;
-};
+}

@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
 
-import { tokenInfoERC20a, tokenInfoERC721a, tokenInfoERC1155a } from 'mocks/tokens/tokenInfo';
 import * as tokenTransferMock from 'mocks/tokens/tokenTransfer';
 import { test, expect } from 'playwright/lib';
 
@@ -11,20 +10,16 @@ test('erc20 +@mobile', async({ render }) => {
   const component = await render(
     <Box pt={{ base: '134px', lg: '100px' }}>
       <TokenTransfer
-
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:
         transfersQuery={{
           data: {
             items: [ tokenTransferMock.erc20 ],
             next_page_params: null,
           },
-
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore:
           pagination: { page: 1, isVisible: true },
-        }}
-        // @ts-ignore:
-        tokenQuery={{
-          data: tokenInfoERC20a,
         }}
       />
     </Box>,
@@ -37,20 +32,16 @@ test('erc721 +@mobile', async({ render }) => {
   const component = await render(
     <Box pt={{ base: '134px', lg: '100px' }}>
       <TokenTransfer
-
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:
         transfersQuery={{
           data: {
             items: [ tokenTransferMock.erc721 ],
             next_page_params: null,
           },
-
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore:
           pagination: { page: 1, isVisible: true },
-        }}
-        // @ts-ignore:
-        tokenQuery={{
-          data: tokenInfoERC721a,
         }}
       />
     </Box>,
@@ -63,7 +54,7 @@ test('erc1155 +@mobile', async({ render }) => {
   const component = await render(
     <Box pt={{ base: '134px', lg: '100px' }}>
       <TokenTransfer
-
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore:
         transfersQuery={{
           data: {
@@ -75,13 +66,9 @@ test('erc1155 +@mobile', async({ render }) => {
             ],
             next_page_params: null,
           },
-
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore:
           pagination: { page: 1, isVisible: true },
-        }}
-        // @ts-ignore:
-        tokenQuery={{
-          data: tokenInfoERC1155a,
         }}
       />
     </Box>,

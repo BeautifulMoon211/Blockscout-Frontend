@@ -59,15 +59,7 @@ const TxLogs = ({ txQuery, logsFilter }: Props) => {
           <Pagination ml="auto" { ...pagination }/>
         </ActionBar>
       ) }
-      { items.map((item, index) => (
-        <LogItem
-          key={ index }
-          { ...item }
-          type="transaction"
-          isLoading={ isPlaceholderData }
-          defaultDataType={ txQuery.data?.zilliqa?.is_scilla ? 'UTF-8' : undefined }
-        />
-      )) }
+      { items.map((item, index) => <LogItem key={ index } { ...item } type="transaction" isLoading={ isPlaceholderData }/>) }
     </Box>
   );
 };

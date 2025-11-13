@@ -47,20 +47,16 @@ const TxDetailsWrapped = ({ data }: Props) => {
 
       <DetailsInfoItemDivider/>
 
-      { data.to && (
-        <>
-          <DetailsInfoItem.Label
-            hint="Address (external or contract) receiving the transaction"
-          >
-            { data.to.is_contract ? 'Interacted with contract' : 'To' }
-          </DetailsInfoItem.Label>
-          <DetailsInfoItem.Value>
-            <Flex flexWrap="nowrap" alignItems="center" maxW="100%">
-              <AddressEntity address={ data.to }/>
-            </Flex>
-          </DetailsInfoItem.Value>
-        </>
-      ) }
+      <DetailsInfoItem.Label
+        hint="Address (external or contract) receiving the transaction"
+      >
+        { data.to?.is_contract ? 'Interacted with contract' : 'To' }
+      </DetailsInfoItem.Label>
+      <DetailsInfoItem.Value>
+        <Flex flexWrap="nowrap" alignItems="center" maxW="100%">
+          <AddressEntity address={ data.to }/>
+        </Flex>
+      </DetailsInfoItem.Value>
 
       <DetailsInfoItemDivider/>
 

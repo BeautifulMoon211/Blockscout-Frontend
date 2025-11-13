@@ -15,7 +15,7 @@ interface Props {
 
 const VerifiedAddressesTable = ({ data, applications, onItemEdit, onItemAdd, isLoading }: Props) => {
   return (
-    <Table>
+    <Table variant="simple">
       <Thead>
         <Tr>
           <Th>Address</Th>

@@ -1,4 +1,4 @@
-import { Tag, Flex, Text, Link, LightMode } from '@chakra-ui/react';
+import { Tag, Flex, Text, Link, Skeleton, LightMode } from '@chakra-ui/react';
 import React from 'react';
 
 import type { AddressNFT } from 'types/api/address';
@@ -7,7 +7,6 @@ import { route } from 'nextjs-routes';
 
 import getCurrencyValue from 'lib/getCurrencyValue';
 import { getTokenTypeName } from 'lib/token/tokenTypes';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import NftEntity from 'ui/shared/entities/nft/NftEntity';
 import TokenEntity from 'ui/shared/entities/token/TokenEntity';
 import NftMedia from 'ui/shared/nft/NftMedia';
@@ -30,7 +29,8 @@ const NFTItem = ({ token, value, isLoading, withTokenLink, ...tokenInstance }: P
       <Link href={ isLoading ? undefined : tokenInstanceLink }>
         <NftMedia
           mb="18px"
-          data={ tokenInstance }
+          animationUrl={ tokenInstance?.animation_url ?? null }
+          imageUrl={ tokenInstance?.image_url ?? null }
           isLoading={ isLoading }
           autoplayVideo={ false }
         />

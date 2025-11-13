@@ -11,10 +11,9 @@ import { useLinkStyles } from './useLinkStyles';
 type Props = LinkProps & {
   variant?: Variants;
   isLoading?: boolean;
-  scroll?: boolean;
-};
+}
 
-const LinkInternal = ({ isLoading, variant, scroll = true, ...props }: Props, ref: LegacyRef<HTMLAnchorElement>) => {
+const LinkInternal = ({ isLoading, variant, ...props }: Props, ref: LegacyRef<HTMLAnchorElement>) => {
   const styleProps = useLinkStyles({}, variant);
 
   if (isLoading) {
@@ -26,7 +25,7 @@ const LinkInternal = ({ isLoading, variant, scroll = true, ...props }: Props, re
   }
 
   return (
-    <NextLink href={ props.href as NextLinkProps['href'] } passHref target={ props.target } legacyBehavior scroll={ scroll }>
+    <NextLink href={ props.href as NextLinkProps['href'] } passHref target={ props.target } legacyBehavior>
       <Link { ...props } ref={ ref } { ...styleProps }/>
     </NextLink>
   );

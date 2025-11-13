@@ -26,7 +26,7 @@ type Props = {
   currentAddress?: string;
   enableTimeIncrement?: boolean;
   isLoading?: boolean;
-};
+}
 
 const TxsTable = ({
   txs,
@@ -49,26 +49,18 @@ const TxsTable = ({
 
   return (
     <AddressHighlightProvider>
-      <Table minWidth="950px">
+      <Table variant="simple" minWidth="950px" size="xs">
         <TheadSticky top={ top }>
           <Tr>
             <Th width="54px"></Th>
             <Th width="180px">Txn hash</Th>
             <Th width="160px">Type</Th>
             <Th width="20%">Method</Th>
-            { showBlockInfo && (
-              <Th width="18%">
-                <Link onClick={ isLoading ? undefined : sort('block_number') } display="flex" alignItems="center">
-                  { sorting === 'block_number-asc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(-90deg)"/> }
-                  { sorting === 'block_number-desc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(90deg)"/> }
-                  Block
-                </Link>
-              </Th>
-            ) }
+            { showBlockInfo && <Th width="18%">Block</Th> }
             <Th width="224px">From/To</Th>
             { !config.UI.views.tx.hiddenFields?.value && (
               <Th width="20%" isNumeric>
-                <Link onClick={ isLoading ? undefined : sort('value') } display="flex" alignItems="center" justifyContent="end">
+                <Link onClick={ sort('value') } display="flex" justifyContent="end">
                   { sorting === 'value-asc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(-90deg)"/> }
                   { sorting === 'value-desc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(90deg)"/> }
                   { `Value ${ currencyUnits.ether }` }
@@ -77,7 +69,7 @@ const TxsTable = ({
             ) }
             { !config.UI.views.tx.hiddenFields?.tx_fee && (
               <Th width="20%" isNumeric pr={ 5 }>
-                <Link onClick={ isLoading ? undefined : sort('fee') } display="flex" alignItems="center" justifyContent="end">
+                <Link onClick={ sort('fee') } display="flex" justifyContent="end">
                   { sorting === 'fee-asc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(-90deg)"/> }
                   { sorting === 'fee-desc' && <IconSvg boxSize={ 5 } name="arrows/east" transform="rotate(90deg)"/> }
                   { `Fee${ feeCurrency }` }

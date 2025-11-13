@@ -18,7 +18,7 @@ interface Props {
 const AddressIntTxsTable = ({ data, currentAddress, isLoading }: Props) => {
   return (
     <AddressHighlightProvider>
-      <Table>
+      <Table variant="simple" size="sm">
         <Thead top={ 68 }>
           <Tr>
             <Th width="15%">Parent txn hash</Th>

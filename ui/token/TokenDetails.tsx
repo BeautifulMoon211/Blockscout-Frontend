@@ -1,4 +1,4 @@
-import { Box, Grid, Link } from '@chakra-ui/react';
+import { Box, Grid, Link, Skeleton } from '@chakra-ui/react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
@@ -17,7 +17,6 @@ import { TOKEN_COUNTERS } from 'stubs/token';
 import type { TokenTabs } from 'ui/pages/Token';
 import AppActionButton from 'ui/shared/AppActionButton/AppActionButton';
 import useAppActionData from 'ui/shared/AppActionButton/useAppActionData';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import * as DetailsInfoItem from 'ui/shared/DetailsInfoItem';
 import DetailsSponsoredItem from 'ui/shared/DetailsSponsoredItem';
 import TruncatedValue from 'ui/shared/TruncatedValue';
@@ -101,7 +100,7 @@ const TokenDetails = ({ tokenQuery }: Props) => {
     <Grid
       columnGap={ 8 }
       rowGap={{ base: 1, lg: 3 }}
-      templateColumns={{ base: 'minmax(0, 1fr)', lg: 'auto minmax(0, 1fr)' }} overflow="hidden"
+      templateColumns={{ base: 'minmax(0, 1fr)', lg: 'auto minmax(728px, auto)' }} overflow="hidden"
     >
       { exchangeRate && (
         <>

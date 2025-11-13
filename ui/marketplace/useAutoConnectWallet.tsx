@@ -3,11 +3,11 @@ import { useEffect, useRef } from 'react';
 
 import removeQueryParam from 'lib/router/removeQueryParam';
 import updateQueryParam from 'lib/router/updateQueryParam';
-import useWeb3Wallet from 'lib/web3/useWallet';
+import useWallet from 'ui/snippets/walletMenu/useWallet';
 
 export default function useAutoConnectWallet() {
   const router = useRouter();
-  const web3Wallet = useWeb3Wallet({ source: 'Swap button' });
+  const { isWalletConnected, isModalOpen, connect } = useWallet({ source: 'Swap button' });
   const isConnectionStarted = useRef(false);
 
   useEffect(() => {
@@ -17,11 +17,11 @@ export default function useAutoConnectWallet() {
 
     let timer: ReturnType<typeof setTimeout>;
 
-    if (!web3Wallet.isConnected && !web3Wallet.isOpen) {
+    if (!isWalletConnected && !isModalOpen) {
       if (!isConnectionStarted.current) {
         timer = setTimeout(() => {
-          if (!web3Wallet.isConnected) {
-            web3Wallet.connect();
+          if (!isWalletConnected) {
+            connect();
             isConnectionStarted.current = true;
           }
         }, 500);
@@ -29,11 +29,11 @@ export default function useAutoConnectWallet() {
         isConnectionStarted.current = false;
         updateQueryParam(router, 'action', 'tooltip');
       }
-    } else if (web3Wallet.isConnected) {
+    } else if (isWalletConnected) {
       isConnectionStarted.current = false;
       removeQueryParam(router, 'action');
     }
 
     return () => clearTimeout(timer);
-  }, [ router, web3Wallet ]);
+  }, [ isWalletConnected, isModalOpen, connect, router ]);
 }

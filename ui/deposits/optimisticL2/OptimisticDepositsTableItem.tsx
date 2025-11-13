@@ -1,11 +1,10 @@
-import { Td, Tr } from '@chakra-ui/react';
+import { Td, Tr, Skeleton } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 
 import type { OptimisticL2DepositsItem } from 'types/api/optimisticL2';
 
 import config from 'configs/app';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntityL1 from 'ui/shared/entities/address/AddressEntityL1';
 import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
@@ -37,7 +36,7 @@ const OptimisticDepositsTableItem = ({ item, isLoading }: Props) => {
       <Td verticalAlign="middle">
         <TxEntity
           isLoading={ isLoading }
-          hash={ item.l2_transaction_hash }
+          hash={ item.l2_tx_hash }
           fontSize="sm"
           lineHeight={ 5 }
           truncation="constant_long"
@@ -55,7 +54,7 @@ const OptimisticDepositsTableItem = ({ item, isLoading }: Props) => {
       <Td verticalAlign="middle">
         <TxEntityL1
           isLoading={ isLoading }
-          hash={ item.l1_transaction_hash }
+          hash={ item.l1_tx_hash }
           truncation="constant_long"
           noIcon
           fontSize="sm"
@@ -64,7 +63,7 @@ const OptimisticDepositsTableItem = ({ item, isLoading }: Props) => {
       </Td>
       <Td verticalAlign="middle">
         <AddressEntityL1
-          address={{ hash: item.l1_transaction_origin, name: '', is_contract: false, is_verified: false, ens_domain_name: null, implementations: null }}
+          address={{ hash: item.l1_tx_origin, name: '', is_contract: false, is_verified: false, ens_domain_name: null, implementations: null }}
           isLoading={ isLoading }
           truncation="constant"
           noCopy
@@ -72,7 +71,7 @@ const OptimisticDepositsTableItem = ({ item, isLoading }: Props) => {
       </Td>
       <Td verticalAlign="middle" isNumeric>
         <Skeleton isLoaded={ !isLoading } color="text_secondary" display="inline-block">
-          <span>{ BigNumber(item.l2_transaction_gas_limit).toFormat() }</span>
+          <span>{ BigNumber(item.l2_tx_gas_limit).toFormat() }</span>
         </Skeleton>
       </Td>
     </Tr>

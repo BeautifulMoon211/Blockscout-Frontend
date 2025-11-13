@@ -14,7 +14,7 @@ interface Props {
 
 const ButtonItem = ({ className, label, onClick, icon, isDisabled }: Props) => {
   return (
-    <Tooltip label={ label } isDisabled={ isDisabled }>
+    <Tooltip label={ label }>
       <IconButton
         aria-label={ label }
         className={ className }

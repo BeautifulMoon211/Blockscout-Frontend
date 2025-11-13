@@ -11,9 +11,8 @@ test.beforeEach(async({ mockTextAd, mockAssetResponse }) => {
   await mockAssetResponse('https://example.com/logo.png', './playwright/mocks/image_s.jpg');
 });
 
-test('default view +@mobile', async({ render, page }) => {
+test('default view +@mobile', async({ render }) => {
   const component = await render(<DefaultView/>);
-  await page.mouse.move(1000, 1000);
   await expect(component).toHaveScreenshot();
 });
 

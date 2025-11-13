@@ -1,9 +1,8 @@
-import { Td, Tr, Box } from '@chakra-ui/react';
+import { Td, Tr, Skeleton, Box } from '@chakra-ui/react';
 import React, { useMemo } from 'react';
 
 import type { NovesResponseData } from 'types/api/noves';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
 import NovesFromTo from 'ui/shared/Noves/NovesFromTo';
@@ -27,7 +26,7 @@ const AddressAccountHistoryTableItem = (props: Props) => {
     <Tr>
       <Td px={ 3 } py="18px" fontSize="sm" >
         <TimeAgoWithTooltip
-          timestamp={ props.tx.rawTransactionData.timestamp * 1000 }
+          timestamp={ (props.tx.rawTransactionData.timestamp * 1000).toString() }
           isLoading={ props.isPlaceholderData }
           color="text_secondary"
           borderRadius="sm"

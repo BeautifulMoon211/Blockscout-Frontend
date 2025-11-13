@@ -5,10 +5,12 @@ import type { NavItemInternal, NavItem, NavGroupItem } from 'types/client/naviga
 
 import config from 'configs/app';
 import { rightLineArrow } from 'lib/html-entities';
+import UserAvatar from 'ui/shared/UserAvatar';
 
 interface ReturnType {
   mainNavItems: Array<NavItem | NavGroupItem>;
   accountNavItems: Array<NavItem>;
+  profileItem: NavItem;
 }
 
 export function isGroupItem(item: NavItem | NavGroupItem): item is NavGroupItem {
@@ -109,12 +111,7 @@ export default function useNavItems(): ReturnType {
 
     const rollupFeature = config.features.rollup;
 
-    if (rollupFeature.isEnabled && (
-      rollupFeature.type === 'optimistic' ||
-      rollupFeature.type === 'arbitrum' ||
-      rollupFeature.type === 'zkEvm' ||
-      rollupFeature.type === 'scroll'
-    )) {
+    if (rollupFeature.isEnabled && (rollupFeature.type === 'optimistic' || rollupFeature.type === 'arbitrum' || rollupFeature.type === 'zkEvm')) {
       blockchainNavItems = [
         [
           txs,
@@ -125,7 +122,7 @@ export default function useNavItems(): ReturnType {
           blocks,
           rollupTxnBatches,
           rollupDisputeGames,
-          rollupFeature.outputRootsEnabled ? rollupOutputRoots : undefined,
+          rollupFeature.type === 'optimistic' ? rollupOutputRoots : undefined,
         ].filter(Boolean),
         [
           userOps,
@@ -184,27 +181,6 @@ export default function useNavItems(): ReturnType {
       ].filter(Boolean);
     }
 
-    const tokensNavItems = [
-      {
-        text: 'Tokens',
-        nextRoute: { pathname: '/tokens' as const },
-        icon: 'token',
-        isActive: pathname === '/tokens' || pathname.startsWith('/token/'),
-      },
-      {
-        text: 'Token transfers',
-        nextRoute: { pathname: '/token-transfers' as const },
-        icon: 'token-transfers',
-        isActive: pathname === '/token-transfers',
-      },
-      config.features.pools.isEnabled && {
-        text: 'DEX tracker',
-        nextRoute: { pathname: '/pools' as const },
-        icon: 'dex-tracker',
-        isActive: pathname === '/pools' || pathname.startsWith('/pool/'),
-      },
-    ].filter(Boolean);
-
     const apiNavItems: Array<NavItem> = [
       config.features.restApiDocs.isEnabled ? {
         text: 'REST API',
@@ -258,9 +234,9 @@ export default function useNavItems(): ReturnType {
       },
       {
         text: 'Tokens',
+        nextRoute: { pathname: '/tokens' as const },
         icon: 'token',
-        isActive: tokensNavItems.flat().some(item => isInternalItem(item) && item.isActive),
-        subItems: tokensNavItems,
+        isActive: pathname.startsWith('/token'),
       },
       config.features.marketplace.isEnabled ? {
         text: 'DApps',
@@ -272,7 +248,7 @@ export default function useNavItems(): ReturnType {
         text: 'Charts & stats',
         nextRoute: { pathname: '/stats' as const },
         icon: 'stats',
-        isActive: pathname.startsWith('/stats'),
+        isActive: pathname === '/stats',
       } : null,
       apiNavItems.length > 0 && {
         text: 'API',
@@ -321,6 +297,13 @@ export default function useNavItems(): ReturnType {
       },
     ].filter(Boolean);
 
-    return { mainNavItems, accountNavItems };
+    const profileItem = {
+      text: 'My profile',
+      nextRoute: { pathname: '/auth/profile' as const },
+      iconComponent: UserAvatar,
+      isActive: pathname === '/auth/profile',
+    };
+
+    return { mainNavItems, accountNavItems, profileItem };
   }, [ pathname ]);
 }

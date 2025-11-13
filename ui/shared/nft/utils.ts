@@ -1,7 +1,5 @@
 export type MediaType = 'image' | 'video' | 'html';
 
-export type SrcType = 'url' | 'blob';
-
 const IMAGE_EXTENSIONS = [
   '.jpg', 'jpeg',
   '.png',

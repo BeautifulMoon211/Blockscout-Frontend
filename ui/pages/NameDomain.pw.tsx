@@ -7,13 +7,11 @@ import { test, expect } from 'playwright/lib';
 
 import NameDomain from './NameDomain';
 
-test('details tab', async({ render, mockTextAd, mockApiResponse, mockAssetResponse }) => {
+test('details tab', async({ render, mockTextAd, mockApiResponse }) => {
   await mockTextAd();
   await mockApiResponse('domain_info', ensDomainMock.ensDomainA, {
     pathParams: { chainId: config.chain.id, name: ensDomainMock.ensDomainA.name },
   });
-  await mockAssetResponse(ensDomainMock.ensDomainA.protocol?.icon_url as string, './playwright/mocks/image_s.jpg');
-
   const component = await render(
     <NameDomain/>,
     { hooksConfig: {
@@ -26,7 +24,7 @@ test('details tab', async({ render, mockTextAd, mockApiResponse, mockAssetRespon
   await expect(component).toHaveScreenshot();
 });
 
-test('history tab +@mobile', async({ render, mockTextAd, mockApiResponse, mockAssetResponse }) => {
+test('history tab +@mobile', async({ render, mockTextAd, mockApiResponse }) => {
   await mockTextAd();
   await mockApiResponse('domain_info', ensDomainMock.ensDomainA, {
     pathParams: { chainId: config.chain.id, name: ensDomainMock.ensDomainA.name },
@@ -39,7 +37,6 @@ test('history tab +@mobile', async({ render, mockTextAd, mockApiResponse, mockAs
   }, {
     pathParams: { chainId: config.chain.id, name: ensDomainMock.ensDomainA.name },
   });
-  await mockAssetResponse(ensDomainMock.ensDomainA.protocol?.icon_url as string, './playwright/mocks/image_s.jpg');
   const component = await render(
     <NameDomain/>,
     { hooksConfig: {

@@ -1,12 +1,13 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Flex, Select, Skeleton, Text, Tooltip } from '@chakra-ui/react';
 import React from 'react';
 
+import type { AddressImplementation } from 'types/api/addressParams';
 import type { SmartContract } from 'types/api/contract';
 
 import { route } from 'nextjs-routes';
 
-import formatLanguageName from 'lib/contracts/formatLanguageName';
-import Skeleton from 'ui/shared/chakra/Skeleton';
+import useApiQuery from 'lib/api/useApiQuery';
+import * as stubs from 'stubs/contract';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import LinkInternal from 'ui/shared/links/LinkInternal';
 import CodeEditor from 'ui/shared/monaco/CodeEditor';
@@ -26,10 +27,6 @@ function getEditorData(contractInfo: SmartContract | undefined) {
         return 'vy';
       case 'yul':
         return 'yul';
-      case 'scilla':
-        return 'scilla';
-      case 'stylus_rust':
-        return 'rs';
       default:
         return 'sol';
     }
@@ -41,51 +38,97 @@ function getEditorData(contractInfo: SmartContract | undefined) {
   ];
 }
 
-interface Props {
-  data: SmartContract | undefined;
-  sourceAddress: string;
-  isLoading?: boolean;
+interface SourceContractOption {
+  address: string;
+  label: string;
 }
 
-export const ContractSourceCode = ({ data, isLoading, sourceAddress }: Props) => {
+interface Props {
+  address: string;
+  implementations?: Array<AddressImplementation>;
+}
+
+export const ContractSourceCode = ({ address, implementations }: Props) => {
+
+  const options: Array<SourceContractOption> = React.useMemo(() => {
+    return [
+      { label: 'Proxy', address },
+      ...(implementations || [])
+        .filter((item) => item.name && item.address !== address)
+        .map(({ name, address }, item, array) => ({ address, label: array.length === 1 ? 'Implementation' : `Impl: ${ name }` })),
+    ];
+  }, [ address, implementations ]);
+
+  const [ sourceContract, setSourceContract ] = React.useState<SourceContractOption>(options[0]);
+
+  const contractQuery = useApiQuery('contract', {
+    pathParams: { hash: sourceContract.address },
+    queryOptions: {
+      refetchOnMount: false,
+      placeholderData: stubs.CONTRACT_CODE_VERIFIED,
+    },
+  });
 
   const editorData = React.useMemo(() => {
-    return getEditorData(data);
-  }, [ data ]);
+    return getEditorData(contractQuery.data);
+  }, [ contractQuery.data ]);
+
+  const isLoading = contractQuery.isPlaceholderData;
+
+  const handleSelectChange = React.useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    const nextOption = options.find(({ address }) => address === event.target.value);
+    if (nextOption) {
+      setSourceContract(nextOption);
+    }
+  }, [ options ]);
 
   const heading = (
     <Skeleton isLoaded={ !isLoading } fontWeight={ 500 }>
       <span>Contract source code</span>
-      { data?.language &&
-        <Text whiteSpace="pre" as="span" variant="secondary"> ({ formatLanguageName(data.language) })</Text> }
+      { contractQuery.data?.language &&
+        <Text whiteSpace="pre" as="span" variant="secondary" textTransform="capitalize"> ({ contractQuery.data.language })</Text> }
     </Skeleton>
   );
 
-  const externalLibraries = data?.external_libraries ?
-    <ContractExternalLibraries data={ data.external_libraries } isLoading={ isLoading }/> :
+  const select = options.length > 1 ? (
+    <Select
+      size="xs"
+      value={ sourceContract.address }
+      onChange={ handleSelectChange }
+      w="auto"
+      maxW={{ lg: '200px', xl: '400px' }}
+      whiteSpace="nowrap"
+      textOverflow="ellipsis"
+      fontWeight={ 600 }
+      borderRadius="base"
+    >
+      { options.map((option) => <option key={ option.address } value={ option.address }>{ option.label }</option>) }
+    </Select>
+  ) : null;
+
+  const externalLibraries = contractQuery.data?.external_libraries ?
+    <ContractExternalLibraries data={ contractQuery.data.external_libraries } isLoading={ isLoading }/> :
     null;
 
-  const diagramLink = data?.can_be_visualized_via_sol2uml ? (
+  const diagramLink = contractQuery?.data?.can_be_visualized_via_sol2uml ? (
     <Tooltip label="Visualize contract code using Sol2Uml JS library">
       <LinkInternal
-        href={ route({ pathname: '/visualize/sol2uml', query: { address: sourceAddress } }) }
+        href={ route({ pathname: '/visualize/sol2uml', query: { address: sourceContract.address } }) }
         ml={{ base: '0', lg: 'auto' }}
         isLoading={ isLoading }
       >
         <Skeleton isLoaded={ !isLoading }>
-          View UML diagram
+            View UML diagram
         </Skeleton>
       </LinkInternal>
     </Tooltip>
   ) : null;
 
-  const ides = data?.language && [ 'solidity', 'vyper', 'yul' ].includes(data.language) ?
-    <ContractCodeIdes hash={ sourceAddress } isLoading={ isLoading }/> :
-    null;
+  const ides = <ContractCodeIdes hash={ sourceContract.address } isLoading={ isLoading }/>;
 
-  const copyToClipboard = data && editorData?.length === 1 ? (
+  const copyToClipboard = contractQuery.data && editorData?.length === 1 ? (
     <CopyToClipboard
-      text={ data.source_code }
+      text={ contractQuery.data.source_code }
       isLoading={ isLoading }
       ml={{ base: 'auto', lg: diagramLink ? '0' : 'auto' }}
     />
@@ -103,13 +146,13 @@ export const ContractSourceCode = ({ data, isLoading, sourceAddress }: Props) =>
 
     return (
       <CodeEditor
-        key={ sourceAddress }
+        key={ sourceContract.address }
         data={ editorData }
-        remappings={ data?.compiler_settings?.remappings }
-        libraries={ data?.external_libraries ?? undefined }
-        language={ data?.language ?? undefined }
+        remappings={ contractQuery.data?.compiler_settings?.remappings }
+        libraries={ contractQuery.data?.external_libraries ?? undefined }
+        language={ contractQuery.data?.language ?? undefined }
         mainFile={ editorData[0]?.file_path }
-        contractName={ data?.name ?? undefined }
+        contractName={ contractQuery.data?.name ?? undefined }
       />
     );
   })();
@@ -118,6 +161,7 @@ export const ContractSourceCode = ({ data, isLoading, sourceAddress }: Props) =>
     <section>
       <Flex alignItems="center" mb={ 3 } columnGap={ 3 } rowGap={ 2 } flexWrap="wrap">
         { heading }
+        { select }
         { externalLibraries }
         { diagramLink }
         { ides }

@@ -10,7 +10,6 @@ import Input from './Input';
 import Link from './Link';
 import Menu from './Menu';
 import Modal from './Modal';
-import PinInput from './PinInput';
 import Popover from './Popover';
 import Radio from './Radio';
 import Select from './Select';
@@ -37,7 +36,6 @@ const components = {
   Link,
   Menu,
   Modal,
-  PinInput,
   Popover,
   Radio,
   Select,

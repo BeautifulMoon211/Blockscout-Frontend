@@ -1,8 +1,7 @@
-import { chakra, Flex, useColorModeValue } from '@chakra-ui/react';
+import { chakra, Flex, Skeleton, useColorModeValue } from '@chakra-ui/react';
 import type { As, IconProps } from '@chakra-ui/react';
 import React from 'react';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import type { Props as CopyToClipboardProps } from 'ui/shared/CopyToClipboard';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import HashStringShorten from 'ui/shared/HashStringShorten';
@@ -19,7 +18,9 @@ export type Truncation = 'constant' | 'constant_long' | 'dynamic' | 'tail' | 'no
 export interface EntityBaseProps {
   className?: string;
   href?: string;
-  icon?: EntityIconProps;
+  iconName?: IconName;
+  iconSize?: IconSize;
+  iconColor?: IconProps['color'];
   isExternal?: boolean;
   isLoading?: boolean;
   noCopy?: boolean;
@@ -80,29 +81,28 @@ const Link = chakra(({ isLoading, children, isExternal, onClick, href, noLink }:
   );
 });
 
-interface EntityIconProps extends Pick<IconProps, 'color' | 'borderRadius' | 'marginRight' | 'boxSize'> {
-  name?: IconName;
-  size?: IconSize;
+export interface IconBaseProps extends Pick<EntityBaseProps, 'isLoading' | 'iconSize' | 'noIcon'> {
+  name: IconName;
+  color?: IconProps['color'];
+  borderRadius?: IconProps['borderRadius'];
 }
 
-export interface IconBaseProps extends Pick<EntityBaseProps, 'isLoading' | 'noIcon'>, EntityIconProps {}
-
-const Icon = ({ isLoading, noIcon, size, name, color, borderRadius, marginRight, boxSize }: IconBaseProps) => {
+const Icon = ({ isLoading, iconSize, noIcon, name, color, borderRadius }: IconBaseProps) => {
   const defaultColor = useColorModeValue('gray.500', 'gray.400');
 
-  if (noIcon || !name) {
+  if (noIcon) {
     return null;
   }
 
-  const styles = getIconProps(size);
+  const styles = getIconProps(iconSize);
   return (
     <IconSvg
       name={ name }
-      boxSize={ boxSize ?? styles.boxSize }
+      boxSize={ styles.boxSize }
       isLoading={ isLoading }
       borderRadius={ borderRadius ?? 'base' }
       display="block"
-      mr={ marginRight ?? 2 }
+      mr={ 2 }
       color={ color ?? defaultColor }
       minW={ 0 }
       flexShrink={ 0 }
@@ -113,10 +113,9 @@ const Icon = ({ isLoading, noIcon, size, name, color, borderRadius, marginRight,
 export interface ContentBaseProps extends Pick<EntityBaseProps, 'className' | 'isLoading' | 'truncation' | 'tailLength'> {
   asProp?: As;
   text: string;
-  isTooltipDisabled?: boolean;
 }
 
-const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dynamic', tailLength, isTooltipDisabled }: ContentBaseProps) => {
+const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dynamic', tailLength }: ContentBaseProps) => {
 
   const children = (() => {
     switch (truncation) {
@@ -126,7 +125,6 @@ const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dyna
             hash={ text }
             as={ asProp }
             type="long"
-            isTooltipDisabled={ isTooltipDisabled }
           />
         );
       case 'constant':
@@ -134,7 +132,6 @@ const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dyna
           <HashStringShorten
             hash={ text }
             as={ asProp }
-            isTooltipDisabled={ isTooltipDisabled }
           />
         );
       case 'dynamic':
@@ -143,7 +140,6 @@ const Content = chakra(({ className, isLoading, asProp, text, truncation = 'dyna
             hash={ text }
             as={ asProp }
             tailLength={ tailLength }
-            isTooltipDisabled={ isTooltipDisabled }
           />
         );
       case 'tail':

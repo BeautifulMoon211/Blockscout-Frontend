@@ -1,16 +1,19 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 
-import { isBech32Address, fromBech32Address } from 'lib/address/bech32';
 import useApiQuery from 'lib/api/useApiQuery';
 import useDebounce from 'lib/hooks/useDebounce';
 
 export default function useQuickSearchQuery() {
+  const router = useRouter();
+
   const [ searchTerm, setSearchTerm ] = React.useState('');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const pathname = router.pathname;
 
   const query = useApiQuery('quick_search', {
-    queryParams: { q: isBech32Address(debouncedSearchTerm) ? fromBech32Address(debouncedSearchTerm) : debouncedSearchTerm },
+    queryParams: { q: debouncedSearchTerm },
     queryOptions: { enabled: debouncedSearchTerm.trim().length > 0 },
   });
 
@@ -27,5 +30,6 @@ export default function useQuickSearchQuery() {
     handleSearchTermChange: setSearchTerm,
     query,
     redirectCheckQuery,
-  }), [ debouncedSearchTerm, query, redirectCheckQuery, searchTerm ]);
+    pathname,
+  }), [ debouncedSearchTerm, pathname, query, redirectCheckQuery, searchTerm ]);
 }

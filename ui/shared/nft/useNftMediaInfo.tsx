@@ -1,121 +1,62 @@
-import { verifiedFetch } from '@helia/verified-fetch';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-
-import type { TokenInstance } from 'types/api/token';
 
 import type { StaticRoute } from 'nextjs-routes';
 import { route } from 'nextjs-routes';
 
-import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
 import useFetch from 'lib/hooks/useFetch';
 
-import type { MediaType, SrcType } from './utils';
+import type { MediaType } from './utils';
 import { getPreliminaryMediaType } from './utils';
 
 interface Params {
-  data: TokenInstance;
+  imageUrl: string | null;
+  animationUrl: string | null;
   isEnabled: boolean;
 }
 
-interface AssetsData {
-  imageUrl: string | undefined;
-  animationUrl: string | undefined;
+interface ReturnType {
+  type: MediaType | undefined;
+  url: string | null;
 }
 
-type TransportType = 'http' | 'ipfs';
+export default function useNftMediaInfo({ imageUrl, animationUrl, isEnabled }: Params): ReturnType | null {
 
-type ReturnType =
-{
-  src: string;
-  mediaType: MediaType;
-  srcType: SrcType;
-} |
-{
-  mediaType: undefined;
-} |
-null;
-
-export default function useNftMediaInfo({ data, isEnabled }: Params): ReturnType | null {
-
-  const assetsData = composeAssetsData(data);
-  const httpPrimaryQuery = useNftMediaTypeQuery(assetsData.http.animationUrl, isEnabled);
-  const ipfsPrimaryQuery = useFetchAssetViaIpfs(
-    assetsData.ipfs.animationUrl,
-    httpPrimaryQuery.data?.mediaType,
-    isEnabled && (httpPrimaryQuery.data === null || Boolean(httpPrimaryQuery.data?.mediaType)),
-  );
-  const httpSecondaryQuery = useNftMediaTypeQuery(assetsData.http.imageUrl, isEnabled && !httpPrimaryQuery.data && !ipfsPrimaryQuery);
-  const ipfsSecondaryQuery = useFetchAssetViaIpfs(
-    assetsData.ipfs.imageUrl,
-    httpSecondaryQuery.data?.mediaType,
-    isEnabled && (httpSecondaryQuery.data === null || Boolean(httpSecondaryQuery.data?.mediaType)),
-  );
+  const primaryQuery = useNftMediaTypeQuery(animationUrl, isEnabled);
+  const secondaryQuery = useNftMediaTypeQuery(imageUrl, isEnabled && !primaryQuery.isPending && !primaryQuery.data);
 
   return React.useMemo(() => {
-    return ipfsPrimaryQuery || httpPrimaryQuery.data || ipfsSecondaryQuery || httpSecondaryQuery.data || null;
-  }, [ httpPrimaryQuery.data, httpSecondaryQuery.data, ipfsPrimaryQuery, ipfsSecondaryQuery ]);
-}
-
-function composeAssetsData(data: TokenInstance): Record<TransportType, AssetsData> {
-  return {
-    http: {
-      imageUrl: data.image_url || undefined,
-      animationUrl: data.animation_url || undefined,
-    },
-    ipfs: {
-      imageUrl: typeof data.metadata?.image === 'string' ? data.metadata.image : undefined,
-      animationUrl: typeof data.metadata?.animation_url === 'string' ? data.metadata.animation_url : undefined,
-    },
-  };
-}
-
-// As of now we fetch only images via IPFS because video streaming has performance issues
-// Also, we don't want to store the entire file content in the ReactQuery cache, so we don't use useQuery hook here
-function useFetchAssetViaIpfs(url: string | undefined, mediaType: MediaType | undefined, isEnabled: boolean): ReturnType | null {
-  const [ result, setResult ] = React.useState<ReturnType | null>({ mediaType: undefined });
-  const controller = React.useRef<AbortController | null>(null);
-
-  const fetchAsset = React.useCallback(async(url: string) => {
-    try {
-      controller.current = new AbortController();
-      const response = await verifiedFetch(url, { signal: controller.current.signal });
-      if (response.status === 200) {
-        const blob = await response.blob();
-        const src = URL.createObjectURL(blob);
-        setResult({ mediaType: 'image', src, srcType: 'blob' });
-        return;
-      }
-    } catch (error) {}
-    setResult(null);
-  }, []);
-
-  React.useEffect(() => {
-    if (isEnabled) {
-      if (config.UI.views.nft.verifiedFetch.isEnabled && mediaType === 'image' && url && url.includes('ipfs')) {
-        fetchAsset(url);
-      } else {
-        setResult(null);
-      }
-    } else {
-      setResult({ mediaType: undefined });
+    if (primaryQuery.isPending) {
+      return {
+        type: undefined,
+        url: animationUrl,
+      };
     }
-  }, [ fetchAsset, url, mediaType, isEnabled ]);
 
-  React.useEffect(() => {
-    return () => {
-      controller.current?.abort();
-    };
-  }, []);
+    if (primaryQuery.data) {
+      return primaryQuery.data;
+    }
 
-  return result;
+    if (secondaryQuery.isPending) {
+      return {
+        type: undefined,
+        url: imageUrl,
+      };
+    }
+
+    if (secondaryQuery.data) {
+      return secondaryQuery.data;
+    }
+
+    return null;
+  }, [ animationUrl, imageUrl, primaryQuery.data, primaryQuery.isPending, secondaryQuery.data, secondaryQuery.isPending ]);
 }
 
-function useNftMediaTypeQuery(url: string | undefined, enabled: boolean) {
+function useNftMediaTypeQuery(url: string | null, enabled: boolean) {
   const fetch = useFetch();
 
-  return useQuery<ReturnType | null, ResourceError<unknown>, ReturnType | null>({
+  return useQuery<unknown, ResourceError<unknown>, ReturnType | null>({
     queryKey: [ 'nft-media-type', url ],
     queryFn: async() => {
       if (!url) {
@@ -131,10 +72,10 @@ function useNftMediaTypeQuery(url: string | undefined, enabled: boolean) {
       const preliminaryType = getPreliminaryMediaType(url);
 
       if (preliminaryType) {
-        return { mediaType: preliminaryType, src: url, srcType: 'url' };
+        return { type: preliminaryType, url };
       }
 
-      const mediaType = await (async() => {
+      const type = await (async() => {
         try {
           const mediaTypeResourceUrl = route({ pathname: '/node-api/media-type' as StaticRoute<'/api/media-type'>['pathname'], query: { url } });
           const response = await fetch<{ type: MediaType | undefined }, ResourceError>(mediaTypeResourceUrl, undefined, { resource: 'media-type' });
@@ -145,14 +86,13 @@ function useNftMediaTypeQuery(url: string | undefined, enabled: boolean) {
         }
       })();
 
-      if (!mediaType) {
+      if (!type) {
         return null;
       }
 
-      return { mediaType, src: url, srcType: 'url' };
+      return { type, url };
     },
     enabled,
-    placeholderData: { mediaType: undefined },
     staleTime: Infinity,
   });
 }

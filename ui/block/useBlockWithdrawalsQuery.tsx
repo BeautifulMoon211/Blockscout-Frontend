@@ -124,12 +124,14 @@ export default function useBlockWithdrawalsQuery({ heightOrHash, blockQuery, tab
     ((apiQuery.isError || apiQuery.isPlaceholderData) && apiQuery.errorUpdateCount > 0)
   ) && rpcQuery.data && publicClient);
 
-  const rpcQueryWithPages: QueryWithPagesResult<'block_withdrawals'> = {
-    ...rpcQuery as UseQueryResult<BlockWithdrawalsResponse, ResourceError>,
-    pagination: emptyPagination,
-    onFilterChange: () => {},
-    onSortingChange: () => {},
-  };
+  const rpcQueryWithPages: QueryWithPagesResult<'block_withdrawals'> = React.useMemo(() => {
+    return {
+      ...rpcQuery as UseQueryResult<BlockWithdrawalsResponse, ResourceError>,
+      pagination: emptyPagination,
+      onFilterChange: () => {},
+      onSortingChange: () => {},
+    };
+  }, [ rpcQuery ]);
 
   const query = isRpcQuery ? rpcQueryWithPages : apiQuery;
 

@@ -91,7 +91,7 @@ export default function useBlockTxsQuery({ heightOrHash, blockQuery, tab }: Para
               timestamp: block?.timestamp ? dayjs.unix(Number(block.timestamp)).format() : null,
               confirmation_duration: null,
               status: undefined,
-              block_number: Number(block.number),
+              block: Number(block.number),
               value: tx.value.toString(),
               gas_price: tx.gasPrice?.toString() ?? null,
               base_fee_per_gas: block?.baseFeePerGas?.toString() ?? null,
@@ -114,13 +114,13 @@ export default function useBlockTxsQuery({ heightOrHash, blockQuery, tab }: Para
               tx_burnt_fee: null,
               revert_reason: null,
               decoded_input: null,
-              has_error_in_internal_transactions: null,
+              has_error_in_internal_txs: null,
               token_transfers: null,
               token_transfers_overflow: false,
               exchange_rate: null,
               method: null,
-              transaction_types: [],
-              transaction_tag: null,
+              tx_types: [],
+              tx_tag: null,
               actions: [],
             };
           })
@@ -157,12 +157,14 @@ export default function useBlockTxsQuery({ heightOrHash, blockQuery, tab }: Para
     ((apiQuery.isError || apiQuery.isPlaceholderData) && apiQuery.errorUpdateCount > 0)
   ) && rpcQuery.data && publicClient);
 
-  const rpcQueryWithPages: QueryWithPagesResult<'block_txs'> = {
-    ...rpcQuery as UseQueryResult<BlockTransactionsResponse, ResourceError>,
-    pagination: emptyPagination,
-    onFilterChange: () => {},
-    onSortingChange: () => {},
-  };
+  const rpcQueryWithPages: QueryWithPagesResult<'block_txs'> = React.useMemo(() => {
+    return {
+      ...rpcQuery as UseQueryResult<BlockTransactionsResponse, ResourceError>,
+      pagination: emptyPagination,
+      onFilterChange: () => {},
+      onSortingChange: () => {},
+    };
+  }, [ rpcQuery ]);
 
   const query = isRpcQuery ? rpcQueryWithPages : apiQuery;
 

@@ -1,4 +1,4 @@
-import { Box, chakra, Table, Tbody, Tr, Th, Show, Hide } from '@chakra-ui/react';
+import { Box, chakra, Table, Tbody, Tr, Th, Skeleton, Show, Hide } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import type { FormEvent } from 'react';
 import React from 'react';
@@ -6,17 +6,13 @@ import React from 'react';
 import type { SearchResultItem } from 'types/client/search';
 
 import config from 'configs/app';
-import { useSettingsContext } from 'lib/contexts/settings';
 import * as regexp from 'lib/regexp';
-import getQueryParamString from 'lib/router/getQueryParamString';
-import removeQueryParam from 'lib/router/removeQueryParam';
 import useMarketplaceApps from 'ui/marketplace/useMarketplaceApps';
 import SearchResultListItem from 'ui/searchResults/SearchResultListItem';
 import SearchResultsInput from 'ui/searchResults/SearchResultsInput';
 import SearchResultTableItem from 'ui/searchResults/SearchResultTableItem';
 import ActionBar, { ACTION_BAR_HEIGHT_DESKTOP } from 'ui/shared/ActionBar';
 import AppErrorBoundary from 'ui/shared/AppError/AppErrorBoundary';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import ContentLoader from 'ui/shared/ContentLoader';
 import DataFetchAlert from 'ui/shared/DataFetchAlert';
 import * as Layout from 'ui/shared/layout/components';
@@ -32,13 +28,11 @@ import useSearchQuery from 'ui/snippets/searchBar/useSearchQuery';
 
 const SearchResultsPageContent = () => {
   const router = useRouter();
-  const withRedirectCheck = getQueryParamString(router.query.redirect) === 'true';
-  const { query, redirectCheckQuery, searchTerm, debouncedSearchTerm, handleSearchTermChange } = useSearchQuery(withRedirectCheck);
+  const { query, redirectCheckQuery, searchTerm, debouncedSearchTerm, handleSearchTermChange } = useSearchQuery();
   const { data, isError, isPlaceholderData, pagination } = query;
-  const [ showContent, setShowContent ] = React.useState(!withRedirectCheck);
+  const [ showContent, setShowContent ] = React.useState(false);
 
   const marketplaceApps = useMarketplaceApps(debouncedSearchTerm);
-  const settingsContext = useSettingsContext();
 
   React.useEffect(() => {
     if (showContent) {
@@ -81,17 +75,12 @@ const SearchResultsPageContent = () => {
       }
     }
 
-    if (!redirectCheckQuery.isPending) {
-      setShowContent(true);
-      removeQueryParam(router, 'redirect');
-    }
+    !redirectCheckQuery.isPending && setShowContent(true);
   }, [ redirectCheckQuery, router, debouncedSearchTerm, showContent ]);
 
   const handleSubmit = React.useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   }, [ ]);
-
-  const isLoading = marketplaceApps.isPlaceholderData || isPlaceholderData;
 
   const displayedItems: Array<SearchResultItem | SearchResultAppItem> = React.useMemo(() => {
     const apiData = (data?.items || []).filter((item) => {
@@ -122,12 +111,12 @@ const SearchResultsPageContent = () => {
       } : undefined;
 
     return [
-      ...(pagination.page === 1 && !isLoading ? marketplaceApps.displayedApps.map((item) => ({ type: 'app' as const, app: item })) : []),
+      ...(pagination.page === 1 && !isPlaceholderData ? marketplaceApps.displayedApps.map((item) => ({ type: 'app' as const, app: item })) : []),
       futureBlockItem,
       ...apiData,
     ].filter(Boolean);
 
-  }, [ data?.items, data?.next_page_params, isPlaceholderData, pagination.page, debouncedSearchTerm, marketplaceApps.displayedApps, isLoading ]);
+  }, [ data?.items, data?.next_page_params, isPlaceholderData, pagination.page, debouncedSearchTerm, marketplaceApps.displayedApps ]);
 
   const content = (() => {
     if (isError) {
@@ -143,16 +132,15 @@ const SearchResultsPageContent = () => {
         <Show below="lg" ssr={ false }>
           { displayedItems.map((item, index) => (
             <SearchResultListItem
-              key={ (isLoading ? 'placeholder_' : 'actual_') + index }
+              key={ (isPlaceholderData ? 'placeholder_' : 'actual_') + index }
               data={ item }
               searchTerm={ debouncedSearchTerm }
-              isLoading={ isLoading }
-              addressFormat={ settingsContext?.addressFormat }
+              isLoading={ isPlaceholderData }
             />
           )) }
         </Show>
         <Hide below="lg" ssr={ false }>
-          <Table fontWeight={ 500 }>
+          <Table variant="simple" size="md" fontWeight={ 500 }>
             <Thead top={ pagination.isVisible ? ACTION_BAR_HEIGHT_DESKTOP : 0 }>
               <Tr>
                 <Th width="30%">Search result</Th>
@@ -164,11 +152,10 @@ const SearchResultsPageContent = () => {
             <Tbody>
               { displayedItems.map((item, index) => (
                 <SearchResultTableItem
-                  key={ (isLoading ? 'placeholder_' : 'actual_') + index }
+                  key={ (isPlaceholderData ? 'placeholder_' : 'actual_') + index }
                   data={ item }
                   searchTerm={ debouncedSearchTerm }
-                  isLoading={ isLoading }
-                  addressFormat={ settingsContext?.addressFormat }
+                  isLoading={ isPlaceholderData }
                 />
               )) }
             </Tbody>
@@ -185,7 +172,7 @@ const SearchResultsPageContent = () => {
 
     const resultsCount = pagination.page === 1 && !data?.next_page_params ? displayedItems.length : '50+';
 
-    const text = isLoading && pagination.page === 1 ? (
+    const text = isPlaceholderData && pagination.page === 1 ? (
       <Skeleton h={ 6 } w="280px" borderRadius="full" mb={ pagination.isVisible ? 0 : 6 }/>
     ) : (
       (

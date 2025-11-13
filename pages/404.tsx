@@ -1,21 +1,19 @@
+import * as Sentry from '@sentry/react';
 import React from 'react';
 
 import type { NextPageWithLayout } from 'nextjs/types';
 
 import PageNextJs from 'nextjs/PageNextJs';
 
-import { useRollbar } from 'lib/rollbar';
 import AppError from 'ui/shared/AppError/AppError';
 import LayoutError from 'ui/shared/layout/LayoutError';
 
 const error = new Error('Not found', { cause: { status: 404 } });
 
 const Page: NextPageWithLayout = () => {
-  const rollbar = useRollbar();
-
   React.useEffect(() => {
-    rollbar?.error('Page not found');
-  }, [ rollbar ]);
+    Sentry.captureException(new Error('Page not found'), { tags: { source: '404' } });
+  }, []);
 
   return (
     <PageNextJs pathname="/404">

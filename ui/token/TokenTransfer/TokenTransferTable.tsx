@@ -19,16 +19,15 @@ interface Props {
   socketInfoNum?: number;
   tokenId?: string;
   isLoading?: boolean;
-  token: TokenInfo;
+  token?: TokenInfo;
 }
 
 const TokenTransferTable = ({ data, top, showSocketInfo, socketInfoAlert, socketInfoNum, tokenId, isLoading, token }: Props) => {
-
-  const tokenType = token.type;
+  const tokenType = data[0].token.type;
 
   return (
     <AddressHighlightProvider>
-      <Table minW="950px">
+      <Table variant="simple" size="sm" minW="950px">
         <Thead top={ top }>
           <Tr>
             <Th width="280px">Txn hash</Th>
@@ -56,7 +55,7 @@ const TokenTransferTable = ({ data, top, showSocketInfo, socketInfoAlert, socket
           ) }
           { data.map((item, index) => (
             <TokenTransferTableItem
-              key={ item.transaction_hash + item.block_hash + item.log_index + '_' + index }
+              key={ item.tx_hash + item.block_hash + item.log_index + '_' + index }
               { ...item }
               tokenId={ tokenId }
               isLoading={ isLoading }

@@ -50,7 +50,7 @@ test('base view +@mobile +@dark-mode', async({ render, mockApiResponse }) => {
   await expect(component).toHaveScreenshot();
 });
 
-test.describe('bridged tokens', () => {
+test.describe('bridged tokens', async() => {
   const bridgedTokens = {
     items: [
       tokens.bridgedTokenA,

@@ -115,8 +115,7 @@ test.describe('socket', () => {
 
     socketServer.sendMessage(socket, channel, 'token_transfer', { token_transfers: [ tokenTransferMock.erc1155B, tokenTransferMock.erc1155C ] });
 
-    const thirdRow = page.locator('tbody tr:nth-child(3)');
-    await thirdRow.waitFor();
+    await page.waitForSelector('tbody tr:nth-child(3)');
 
     const itemsCountNew = await page.locator('tbody tr').count();
     expect(itemsCountNew).toBe(4);
@@ -148,8 +147,7 @@ test.describe('socket', () => {
 
     socketServer.sendMessage(socket, channel, 'token_transfer', { token_transfers: [ tokenTransferMock.erc1155B, tokenTransferMock.erc1155C ] });
 
-    const thirdRow = page.locator('tbody tr:nth-child(3)');
-    await thirdRow.waitFor();
+    await page.waitForSelector('tbody tr:nth-child(3)');
 
     const itemsCountNew = await page.locator('tbody tr').count();
     expect(itemsCountNew).toBe(3);
@@ -185,8 +183,7 @@ test.describe('socket', () => {
 
     socketServer.sendMessage(socket, channel, 'token_transfer', { token_transfers: [ tokenTransferMock.erc1155B, tokenTransferMock.erc20 ] });
 
-    const thirdRow = page.locator('tbody tr:nth-child(3)');
-    await thirdRow.waitFor();
+    await page.waitForSelector('tbody tr:nth-child(3)');
 
     const itemsCountNew = await page.locator('tbody tr').count();
     expect(itemsCountNew).toBe(3);
@@ -224,8 +221,7 @@ test.describe('socket', () => {
       { token_transfers: [ tokenTransferMock.erc1155B, tokenTransferMock.erc20, tokenTransferMock.erc1155C, tokenTransferMock.erc721 ] },
     );
 
-    const thirdRow = page.locator('tbody tr:nth-child(3)');
-    await thirdRow.waitFor();
+    await page.waitForSelector('tbody tr:nth-child(3)');
 
     const itemsCountNew = await page.locator('tbody tr').count();
     expect(itemsCountNew).toBe(3);

@@ -21,7 +21,7 @@ const NameDomainsTable = ({ data, isLoading, sort, onSortToggle }: Props) => {
   const sortIconTransform = sort?.toLowerCase().includes('asc') ? 'rotate(-90deg)' : 'rotate(90deg)';
 
   return (
-    <Table>
+    <Table variant="simple" size="sm">
       <Thead top={ ACTION_BAR_HEIGHT_DESKTOP }>
         <Tr>
           <Th width="25%">Domain</Th>

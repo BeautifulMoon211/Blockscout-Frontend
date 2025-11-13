@@ -1,13 +1,13 @@
 import { Box, Flex, Text, Grid, useColorModeValue, chakra } from '@chakra-ui/react';
 import React from 'react';
 
-import type { SolidityScanReportSeverityDistribution } from 'lib/solidityScan/schema';
+import type { SolidityscanReport } from 'types/api/contract';
 
 type DistributionItem = {
-  id: keyof SolidityScanReportSeverityDistribution;
+  id: keyof SolidityscanReport['scan_report']['scan_summary']['issue_severity_distribution'];
   name: string;
   color: string;
-};
+}
 
 const DISTRIBUTION_ITEMS: Array<DistributionItem> = [
   { id: 'critical', name: 'Critical', color: '#891F11' },
@@ -19,34 +19,29 @@ const DISTRIBUTION_ITEMS: Array<DistributionItem> = [
 ];
 
 interface Props {
-  vulnerabilities: SolidityScanReportSeverityDistribution;
+  vulnerabilities: SolidityscanReport['scan_report']['scan_summary']['issue_severity_distribution'];
   vulnerabilitiesCount: number;
 }
 
 type ItemProps = {
   item: DistributionItem;
-  vulnerabilities: SolidityScanReportSeverityDistribution;
+  vulnerabilities: SolidityscanReport['scan_report']['scan_summary']['issue_severity_distribution'];
   vulnerabilitiesCount: number;
-};
+}
 
 const SolidityScanReportItem = ({ item, vulnerabilities, vulnerabilitiesCount }: ItemProps) => {
   const bgBar = useColorModeValue('blackAlpha.50', 'whiteAlpha.50');
   const yetAnotherGrayColor = useColorModeValue('gray.400', 'gray.500');
-  const vulnerability = vulnerabilities[item.id];
-
-  if (vulnerability === undefined) {
-    return null;
-  }
 
   return (
     <>
       <Box w={ 3 } h={ 3 } bg={ item.color } borderRadius="6px" mr={ 2 }></Box>
       <Flex justifyContent="space-between" mr={ 3 }>
         <Text>{ item.name }</Text>
-        <Text color={ vulnerability > 0 ? 'text' : yetAnotherGrayColor }>{ vulnerabilities[item.id] }</Text>
+        <Text color={ vulnerabilities[item.id] > 0 ? 'text' : yetAnotherGrayColor }>{ vulnerabilities[item.id] }</Text>
       </Flex>
       <Box bg={ bgBar } h="10px" borderRadius="8px">
-        <Box bg={ item.color } w={ vulnerability / vulnerabilitiesCount } h="10px" borderRadius="8px"/>
+        <Box bg={ item.color } w={ vulnerabilities[item.id] / vulnerabilitiesCount } h="10px" borderRadius="8px"/>
       </Box>
     </>
   );

@@ -1,4 +1,4 @@
-import { Tr, Td, Box, Flex } from '@chakra-ui/react';
+import { Tr, Td, Box, Flex, Skeleton } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 
@@ -6,7 +6,6 @@ import type { InternalTransaction } from 'types/api/internalTransaction';
 
 import config from 'configs/app';
 import AddressFromTo from 'ui/shared/address/AddressFromTo';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import Tag from 'ui/shared/chakra/Tag';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
@@ -14,7 +13,7 @@ import TxStatus from 'ui/shared/statusTag/TxStatus';
 import TimeAgoWithTooltip from 'ui/shared/TimeAgoWithTooltip';
 import { TX_INTERNALS_ITEMS } from 'ui/tx/internals/utils';
 
-type Props = InternalTransaction & { currentAddress: string; isLoading?: boolean };
+type Props = InternalTransaction & { currentAddress: string; isLoading?: boolean }
 
 const AddressIntTxsTableItem = ({
   type,
@@ -25,7 +24,7 @@ const AddressIntTxsTableItem = ({
   error,
   created_contract: createdContract,
   transaction_hash: txnHash,
-  block_number: blockNumber,
+  block,
   timestamp,
   currentAddress,
   isLoading,
@@ -67,7 +66,7 @@ const AddressIntTxsTableItem = ({
       <Td verticalAlign="middle">
         <BlockEntity
           isLoading={ isLoading }
-          number={ blockNumber }
+          number={ block }
           noIcon
           fontSize="sm"
           lineHeight={ 5 }

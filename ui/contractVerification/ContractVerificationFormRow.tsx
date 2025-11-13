@@ -4,7 +4,7 @@ import React from 'react';
 import useIsMobile from 'lib/hooks/useIsMobile';
 
 interface Props {
-  children: [React.JSX.Element, React.JSX.Element | null] | (React.JSX.Element | null);
+  children: [JSX.Element, JSX.Element | null] | (JSX.Element | null);
   className?: string;
 }
 

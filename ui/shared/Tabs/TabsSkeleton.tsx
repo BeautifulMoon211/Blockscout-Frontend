@@ -1,9 +1,8 @@
-import { Flex, chakra, Box, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Skeleton, chakra, Box, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 
 import type { RoutedTab } from '../Tabs/types';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import useTabIndexFromQuery from 'ui/shared/Tabs/useTabIndexFromQuery';
 
 type TabSize = 'sm' | 'md';
@@ -38,15 +37,15 @@ const TabsSkeleton = ({ className, tabs, size = 'md' }: Props) => {
     <Flex className={ className } my={ 8 } alignItems="center" overflow="hidden">
       { tabs.slice(0, tabIndex).map(({ title, id }) => (
         <SkeletonTabText
-          key={ id.toString() }
+          key={ id }
           title={ title }
           size={ size }
         />
       )) }
       { tabs.slice(tabIndex, tabIndex + 1).map(({ title, id }) => (
-        <Box key={ id.toString() } bgColor={ bgColor } py={ size === 'sm' ? 1 : 2 } borderRadius="base" flexShrink={ 0 }>
+        <Box key={ id } bgColor={ bgColor } py={ size === 'sm' ? 1 : 2 } borderRadius="base" flexShrink={ 0 }>
           <SkeletonTabText
-            key={ id.toString() }
+            key={ id }
             title={ title }
             size={ size }
           />
@@ -54,7 +53,7 @@ const TabsSkeleton = ({ className, tabs, size = 'md' }: Props) => {
       )) }
       { tabs.slice(tabIndex + 1).map(({ title, id }) => (
         <SkeletonTabText
-          key={ id.toString() }
+          key={ id }
           title={ title }
           size={ size }
         />

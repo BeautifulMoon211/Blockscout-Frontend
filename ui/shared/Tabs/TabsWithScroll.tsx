@@ -22,8 +22,6 @@ export interface Props extends ThemingProps<'Tabs'> {
   tabListProps?: ChakraProps | (({ isSticky, activeTabIndex }: { isSticky: boolean; activeTabIndex: number }) => ChakraProps);
   rightSlot?: React.ReactNode;
   rightSlotProps?: ChakraProps;
-  leftSlot?: React.ReactNode;
-  leftSlotProps?: ChakraProps;
   stickyEnabled?: boolean;
   onTabChange?: (index: number) => void;
   defaultTabIndex?: number;
@@ -37,8 +35,6 @@ const TabsWithScroll = ({
   tabListProps,
   rightSlot,
   rightSlotProps,
-  leftSlot,
-  leftSlotProps,
   stickyEnabled,
   onTabChange,
   defaultTabIndex,
@@ -103,11 +99,9 @@ const TabsWithScroll = ({
         //    - tabs list is changed when API data is loaded
         // is to do full re-render of the tabs list
         // so we use screenWidth + tabIds as a key for the TabsList component
-        key={ isLoading + '_' + screenWidth + '_' + tabsList.map((tab) => tab.id).join(':') }
+        key={ screenWidth + '_' + tabsList.map((tab) => tab.id).join(':') }
         tabs={ tabs }
         tabListProps={ tabListProps }
-        leftSlot={ leftSlot }
-        leftSlotProps={ leftSlotProps }
         rightSlot={ rightSlot }
         rightSlotProps={ rightSlotProps }
         stickyEnabled={ stickyEnabled }
@@ -117,11 +111,7 @@ const TabsWithScroll = ({
         isLoading={ isLoading }
       />
       <TabPanels>
-        { tabsList.map((tab) => (
-          <TabPanel padding={ 0 } key={ tab.id?.toString() || (typeof tab.title === 'string' ? tab.title : undefined) }>
-            { tab.component }
-          </TabPanel>
-        )) }
+        { tabsList.map((tab) => <TabPanel padding={ 0 } key={ tab.id }>{ tab.component }</TabPanel>) }
       </TabPanels>
     </Tabs>
   );

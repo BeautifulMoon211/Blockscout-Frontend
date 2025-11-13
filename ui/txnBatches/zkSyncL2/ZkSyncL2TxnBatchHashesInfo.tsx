@@ -1,9 +1,8 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type { ZkSyncBatch } from 'types/api/zkSyncL2';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import * as DetailsInfoItem from 'ui/shared/DetailsInfoItem';
 import DetailsTimestamp from 'ui/shared/DetailsTimestamp';
 import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
@@ -11,7 +10,7 @@ import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
 interface Props {
   isLoading: boolean;
   data: Pick<
-    ZkSyncBatch,
+  ZkSyncBatch,
   'commit_transaction_hash' |
   'commit_transaction_timestamp' |
   'prove_transaction_hash' |

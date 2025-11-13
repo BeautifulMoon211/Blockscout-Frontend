@@ -1,12 +1,15 @@
 import { Link } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import React from 'react';
+import type { ControllerRenderProps } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 
 import type { FormFields } from '../types';
 import type { SmartContractVerificationConfig } from 'types/client/contract';
 
 import { getResourceKey } from 'lib/api/useApiQuery';
-import FormFieldFancySelect from 'ui/shared/forms/fields/FormFieldFancySelect';
+import useIsMobile from 'lib/hooks/useIsMobile';
+import FancySelect from 'ui/shared/FancySelect/FancySelect';
 
 import ContractVerificationFormRow from '../ContractVerificationFormRow';
 
@@ -15,6 +18,8 @@ interface Props {
 }
 
 const ContractVerificationFieldEvmVersion = ({ isVyper }: Props) => {
+  const { formState, control } = useFormContext<FormFields>();
+  const isMobile = useIsMobile();
   const queryClient = useQueryClient();
   const config = queryClient.getQueryData<SmartContractVerificationConfig>(getResourceKey('contract_verification_config'));
 
@@ -22,13 +27,29 @@ const ContractVerificationFieldEvmVersion = ({ isVyper }: Props) => {
     (isVyper ? config?.vyper_evm_versions : config?.solidity_evm_versions)?.map((option) => ({ label: option, value: option })) || []
   ), [ config?.solidity_evm_versions, config?.vyper_evm_versions, isVyper ]);
 
+  const renderControl = React.useCallback(({ field }: {field: ControllerRenderProps<FormFields, 'evm_version'>}) => {
+    const error = 'evm_version' in formState.errors ? formState.errors.evm_version : undefined;
+
+    return (
+      <FancySelect
+        { ...field }
+        options={ options }
+        size={ isMobile ? 'md' : 'lg' }
+        placeholder="EVM Version"
+        isDisabled={ formState.isSubmitting }
+        error={ error }
+        isRequired
+      />
+    );
+  }, [ formState.errors, formState.isSubmitting, isMobile, options ]);
+
   return (
     <ContractVerificationFormRow>
-      <FormFieldFancySelect<FormFields, 'evm_version'>
+      <Controller
         name="evm_version"
-        placeholder="EVM Version"
-        options={ options }
-        isRequired
+        control={ control }
+        render={ renderControl }
+        rules={{ required: true }}
       />
       <>
         <span>The EVM version the contract is written for. If the bytecode does not match the version, we try to verify using the latest EVM version. </span>
