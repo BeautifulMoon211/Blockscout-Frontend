@@ -1,11 +1,10 @@
-import { Hide, Show, Text } from '@chakra-ui/react';
+import { Hide, Show, Skeleton, Text } from '@chakra-ui/react';
 import React from 'react';
 
 import useApiQuery from 'lib/api/useApiQuery';
 import { generateListStub } from 'stubs/utils';
 import { ZKEVM_L2_TXN_BATCHES_ITEM } from 'stubs/zkEvmL2';
 import { ACTION_BAR_HEIGHT_DESKTOP } from 'ui/shared/ActionBar';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import DataListDisplay from 'ui/shared/DataListDisplay';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
@@ -60,7 +59,7 @@ const ZkEvmL2TxnBatches = () => {
 
     return (
       <Skeleton isLoaded={ !countersQuery.isPlaceholderData && !isPlaceholderData } display="flex" flexWrap="wrap">
-        Txn batch
+        Tx batch
         <Text fontWeight={ 600 } whiteSpace="pre"> #{ data.items[0].number } </Text>to
         <Text fontWeight={ 600 } whiteSpace="pre"> #{ data.items[data.items.length - 1].number } </Text>
         (total of { countersQuery.data?.toLocaleString() } batches)
@@ -72,11 +71,11 @@ const ZkEvmL2TxnBatches = () => {
 
   return (
     <>
-      <PageTitle title="Txn batches" withTextAd/>
+      <PageTitle title="Tx batches" withTextAd/>
       <DataListDisplay
         isError={ isError }
         items={ data?.items }
-        emptyText="There are no txn batches."
+        emptyText="There are no tx batches."
         content={ content }
         actionBar={ actionBar }
       />

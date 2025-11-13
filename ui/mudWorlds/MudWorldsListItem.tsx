@@ -1,4 +1,4 @@
-import { HStack } from '@chakra-ui/react';
+import { HStack, Skeleton } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 
@@ -6,14 +6,13 @@ import type { MudWorldItem } from 'types/api/mudWorlds';
 
 import config from 'configs/app';
 import { currencyUnits } from 'lib/units';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import ListItemMobile from 'ui/shared/ListItemMobile/ListItemMobile';
 
 type Props = {
   item: MudWorldItem;
   isLoading?: boolean;
-};
+}
 
 const MudWorldsListItem = ({
   item,
@@ -40,7 +39,7 @@ const MudWorldsListItem = ({
       <HStack spacing={ 3 }>
         <Skeleton isLoaded={ !isLoading } fontSize="sm" fontWeight={ 500 }>Txn count</Skeleton>
         <Skeleton isLoaded={ !isLoading } fontSize="sm" color="text_secondary">
-          <span>{ Number(item.transaction_count).toLocaleString() }</span>
+          <span>{ Number(item.tx_count).toLocaleString() }</span>
         </Skeleton>
       </HStack>
     </ListItemMobile>

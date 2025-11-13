@@ -23,20 +23,8 @@ const ItemTuple = ({ abiParameter, data, mode, level }: Props) => {
         <span> { '{' }</span>
       </p>
       { 'components' in abiParameter && abiParameter.components.map((component, index) => {
-        const itemData = (() => {
-          if (typeof data !== 'object' || data === null) {
-            return;
-          }
-
-          if (Array.isArray(data)) {
-            return data[index];
-          }
-
-          if (component.name && component.name in data) {
-            return data[component.name as keyof typeof data];
-          }
-        })();
-
+        const dataObj = typeof data === 'object' && data !== null ? data : undefined;
+        const itemData = dataObj && component.name && component.name in dataObj ? dataObj[component.name as keyof typeof dataObj] : undefined;
         return (
           <Item
             key={ index }

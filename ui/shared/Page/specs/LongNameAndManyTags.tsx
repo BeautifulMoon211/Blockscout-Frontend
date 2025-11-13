@@ -52,7 +52,7 @@ const LongNameAndManyTags = () => {
       beforeTitle={ (
         <TokenEntity.Icon
           token={ tokenData }
-          size="lg"
+          iconSize="lg"
         />
       ) }
       contentAfter={ contentAfter }

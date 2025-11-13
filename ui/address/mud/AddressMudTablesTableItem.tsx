@@ -1,4 +1,4 @@
-import { Td, Tr, Text, useBoolean, Link, Table, VStack, chakra } from '@chakra-ui/react';
+import { Td, Tr, Text, Skeleton, useBoolean, Link, Table, VStack, chakra } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -6,7 +6,6 @@ import type { AddressMudTableItem } from 'types/api/address';
 
 import { route } from 'nextjs-routes';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import Tag from 'ui/shared/chakra/Tag';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
@@ -44,7 +43,7 @@ const AddressMudTablesTableItem = ({ item, isLoading, scrollRef, hash }: Props) 
 
   return (
     <>
-      <Tr borderBottomStyle={ isOpened ? 'hidden' : 'unset' }>
+      <Tr borderStyle={ isOpened ? 'hidden' : 'unset' }>
         <Td verticalAlign="middle">
           <Skeleton isLoaded={ !isLoading }>
             <Link display="block">

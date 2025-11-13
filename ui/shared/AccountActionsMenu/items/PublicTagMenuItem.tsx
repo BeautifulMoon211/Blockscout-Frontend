@@ -8,26 +8,34 @@ import IconSvg from 'ui/shared/IconSvg';
 import ButtonItem from '../parts/ButtonItem';
 import MenuItem from '../parts/MenuItem';
 
-const PublicTagMenuItem = ({ className, hash, type }: ItemProps) => {
+const PublicTagMenuItem = ({ className, hash, onBeforeClick, type }: ItemProps) => {
   const router = useRouter();
 
   const handleClick = React.useCallback(() => {
-    router.push({ pathname: '/public-tags/submit', query: { addresses: [ hash ] } });
-  }, [ hash, router ]);
+    if (!onBeforeClick()) {
+      return;
+    }
 
-  switch (type) {
-    case 'button': {
-      return <ButtonItem label="Add public tag" icon="publictags" onClick={ handleClick } className={ className }/>;
+    router.push({ pathname: '/public-tags/submit', query: { addresses: [ hash ] } });
+  }, [ hash, onBeforeClick, router ]);
+
+  const element = (() => {
+    switch (type) {
+      case 'button': {
+        return <ButtonItem label="Add public tag" icon="publictags" onClick={ handleClick } className={ className }/>;
+      }
+      case 'menu_item': {
+        return (
+          <MenuItem className={ className } onClick={ handleClick }>
+            <IconSvg name="publictags" boxSize={ 6 } mr={ 2 }/>
+            <span>Add public tag</span>
+          </MenuItem>
+        );
+      }
     }
-    case 'menu_item': {
-      return (
-        <MenuItem className={ className } onClick={ handleClick }>
-          <IconSvg name="publictags" boxSize={ 6 } mr={ 2 }/>
-          <span>Add public tag</span>
-        </MenuItem>
-      );
-    }
-  }
+  })();
+
+  return element;
 };
 
 export default React.memo(PublicTagMenuItem);

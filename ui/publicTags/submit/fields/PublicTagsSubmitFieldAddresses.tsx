@@ -1,16 +1,17 @@
-import { GridItem, IconButton } from '@chakra-ui/react';
+import { FormControl, GridItem, IconButton, Input } from '@chakra-ui/react';
 import React from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import type { FormFields } from '../types';
 
-import FormFieldAddress from 'ui/shared/forms/fields/FormFieldAddress';
+import { ADDRESS_REGEXP } from 'lib/validations/address';
 import IconSvg from 'ui/shared/IconSvg';
+import InputPlaceholder from 'ui/shared/InputPlaceholder';
 
 const LIMIT = 20;
 
 const PublicTagsSubmitFieldAddresses = () => {
-  const { control, formState } = useFormContext<FormFields>();
+  const { control, formState, register } = useFormContext<FormFields>();
   const { fields, insert, remove } = useFieldArray<FormFields, 'addresses'>({
     name: 'addresses',
     control,
@@ -35,15 +36,20 @@ const PublicTagsSubmitFieldAddresses = () => {
   return (
     <>
       { fields.map((field, index) => {
+        const error = formState.errors?.addresses?.[ index ]?.hash;
+
         return (
           <React.Fragment key={ field.id }>
             <GridItem colSpan={{ base: 1, lg: 2 }}>
-              <FormFieldAddress<FormFields>
-                name={ `addresses.${ index }.hash` }
-                isRequired
-                placeholder="Smart contract / Address (0x...)"
-                size={{ base: 'md', lg: 'lg' }}
-              />
+              <FormControl variant="floating" isRequired size={{ base: 'md', lg: 'lg' }}>
+                <Input
+                  { ...register(`addresses.${ index }.hash`, { required: true, pattern: ADDRESS_REGEXP }) }
+                  isInvalid={ Boolean(error) }
+                  isDisabled={ formState.isSubmitting }
+                  autoComplete="off"
+                />
+                <InputPlaceholder text="Smart contract / Address (0x...)" error={ error }/>
+              </FormControl>
             </GridItem>
             <GridItem display="flex" alignItems="center" columnGap={ 5 } justifyContent={{ base: 'flex-end', lg: 'flex-start' }}>
               { fields.length < LIMIT && index === fields.length - 1 && (

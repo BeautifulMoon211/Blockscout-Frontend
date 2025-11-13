@@ -14,7 +14,6 @@ import type { FormEvent } from 'react';
 import React from 'react';
 import { Element } from 'react-scroll';
 
-import type { Route } from 'nextjs-routes';
 import { route } from 'nextjs-routes';
 
 import useIsMobile from 'lib/hooks/useIsMobile';
@@ -31,7 +30,7 @@ import useQuickSearchQuery from './useQuickSearchQuery';
 
 type Props = {
   isHomepage?: boolean;
-};
+}
 
 const SCROLL_CONTAINER_ID = 'search_bar_popover_content';
 
@@ -46,22 +45,21 @@ const SearchBar = ({ isHomepage }: Props) => {
 
   const recentSearchKeywords = getRecentSearchKeywords();
 
-  const { searchTerm, debouncedSearchTerm, handleSearchTermChange, query } = useQuickSearchQuery();
+  const { searchTerm, debouncedSearchTerm, handleSearchTermChange, query, pathname } = useQuickSearchQuery();
 
   const handleSubmit = React.useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (searchTerm) {
-      const resultRoute: Route = { pathname: '/search-results', query: { q: searchTerm, redirect: 'true' } };
-      const url = route(resultRoute);
+      const url = route({ pathname: '/search-results', query: { q: searchTerm } });
       mixpanel.logEvent(mixpanel.EventTypes.SEARCH_QUERY, {
         'Search query': searchTerm,
-        'Source page type': mixpanel.getPageType(router.pathname),
+        'Source page type': mixpanel.getPageType(pathname),
         'Result URL': url,
       });
       saveToRecentKeywords(searchTerm);
-      router.push(resultRoute, undefined, { shallow: true });
+      router.push({ pathname: '/search-results', query: { q: searchTerm } }, undefined, { shallow: true });
     }
-  }, [ searchTerm, router ]);
+  }, [ searchTerm, pathname, router ]);
 
   const handleFocus = React.useCallback(() => {
     onOpen();
@@ -90,23 +88,17 @@ const SearchBar = ({ isHomepage }: Props) => {
   const handleItemClick = React.useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
     mixpanel.logEvent(mixpanel.EventTypes.SEARCH_QUERY, {
       'Search query': searchTerm,
-      'Source page type': mixpanel.getPageType(router.pathname),
+      'Source page type': mixpanel.getPageType(pathname),
       'Result URL': event.currentTarget.href,
     });
     saveToRecentKeywords(searchTerm);
     onClose();
-  }, [ router.pathname, searchTerm, onClose ]);
+  }, [ pathname, searchTerm, onClose ]);
 
   const menuPaddingX = isMobile && !isHomepage ? 24 : 0;
   const calculateMenuWidth = React.useCallback(() => {
     menuWidth.current = (inputRef.current?.getBoundingClientRect().width || 0) - menuPaddingX;
   }, [ menuPaddingX ]);
-
-  // clear input on page change
-  React.useEffect(() => {
-    handleSearchTermChange('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ router.asPath?.split('?')?.[0] ]);
 
   React.useEffect(() => {
     const inputEl = inputRef.current;
@@ -151,7 +143,6 @@ const SearchBar = ({ isHomepage }: Props) => {
           <PopoverContent
             w={ `${ menuWidth.current }px` }
             ref={ menuRef }
-            overflow="hidden"
           >
             <PopoverBody
               p={ 0 }
@@ -184,7 +175,7 @@ const SearchBar = ({ isHomepage }: Props) => {
                   href={ route({ pathname: '/search-results', query: { q: searchTerm } }) }
                   fontSize="sm"
                 >
-                  View all results
+                View all results
                 </LinkInternal>
               </PopoverFooter>
             ) }

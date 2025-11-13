@@ -1,24 +1,19 @@
-import { Flex } from '@chakra-ui/react';
-import capitalize from 'lodash/capitalize';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import type { RoutedTab } from 'ui/shared/Tabs/types';
 
 import config from 'configs/app';
+import useHasAccount from 'lib/hooks/useHasAccount';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import useNewTxsSocket from 'lib/hooks/useNewTxsSocket';
-import getNetworkValidationActionText from 'lib/networks/getNetworkValidationActionText';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { TX } from 'stubs/tx';
 import { generateListStub } from 'stubs/utils';
-import IconSvg from 'ui/shared/IconSvg';
-import LinkInternal from 'ui/shared/links/LinkInternal';
 import PageTitle from 'ui/shared/Page/PageTitle';
 import Pagination from 'ui/shared/pagination/Pagination';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
 import RoutedTabs from 'ui/shared/Tabs/RoutedTabs';
-import useIsAuth from 'ui/snippets/auth/useIsAuth';
 import TxsStats from 'ui/txs/TxsStats';
 import TxsWatchlist from 'ui/txs/TxsWatchlist';
 import TxsWithFrontendSorting from 'ui/txs/TxsWithFrontendSorting';
@@ -32,7 +27,7 @@ const TAB_LIST_PROPS = {
 const TABS_HEIGHT = 88;
 
 const Transactions = () => {
-  const verifiedTitle = capitalize(getNetworkValidationActionText());
+  const verifiedTitle = config.chain.verificationType === 'validation' ? 'Validated' : 'Mined';
   const router = useRouter();
   const isMobile = useIsMobile();
   const tab = getQueryParamString(router.query.tab);
@@ -91,7 +86,7 @@ const Transactions = () => {
 
   const { num, socketAlert } = useNewTxsSocket();
 
-  const isAuth = useIsAuth();
+  const hasAccount = useHasAccount();
 
   const tabs: Array<RoutedTab> = [
     {
@@ -132,7 +127,7 @@ const Transactions = () => {
         />
       ),
     },
-    isAuth ? {
+    hasAccount ? {
       id: 'watchlist',
       title: 'Watch list',
       component: <TxsWatchlist query={ txsWatchlistQuery }/>,
@@ -148,35 +143,6 @@ const Transactions = () => {
     }
   })();
 
-  const rightSlot = (() => {
-    if (isMobile) {
-      return null;
-    }
-
-    const isAdvancedFilterEnabled = config.features.advancedFilter.isEnabled;
-
-    if (!isAdvancedFilterEnabled && !pagination.isVisible) {
-      return null;
-    }
-
-    return (
-      <Flex alignItems="center" gap={ 6 }>
-        { isAdvancedFilterEnabled && (
-          <LinkInternal
-            href="/advanced-filter"
-            alignItems="center"
-            display="flex"
-            gap={ 1 }
-          >
-            <IconSvg name="filter" boxSize={ 5 }/>
-            Advanced filter
-          </LinkInternal>
-        ) }
-        { pagination.isVisible && <Pagination my={ 1 } { ...pagination }/> }
-      </Flex>
-    );
-  })();
-
   return (
     <>
       <PageTitle
@@ -187,7 +153,9 @@ const Transactions = () => {
       <RoutedTabs
         tabs={ tabs }
         tabListProps={ isMobile ? undefined : TAB_LIST_PROPS }
-        rightSlot={ rightSlot }
+        rightSlot={ (
+          pagination.isVisible && !isMobile ? <Pagination my={ 1 } { ...pagination }/> : null
+        ) }
         stickyEnabled={ !isMobile }
       />
     </>

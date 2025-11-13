@@ -10,7 +10,6 @@ import { route } from 'nextjs-routes';
 import capitalizeFirstLetter from 'lib/capitalizeFirstLetter';
 import dayjs from 'lib/date/dayjs';
 import useIsMobile from 'lib/hooks/useIsMobile';
-import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
 import { default as Thead } from 'ui/shared/TheadSticky';
@@ -30,10 +29,10 @@ type Props = {
   toggleSorting: (key: AddressMudRecordsSorting['sort']) => void;
   setFilters: React.Dispatch<React.SetStateAction<AddressMudRecordsFilter>>;
   filters: AddressMudRecordsFilter;
-  toggleTableHasHorizontalScroll: () => void;
+  toggleTableHasHorisontalScroll: () => void;
   scrollRef?: React.RefObject<HTMLDivElement>;
   hash: string;
-};
+}
 
 const AddressMudRecordsTable = ({
   data,
@@ -42,7 +41,7 @@ const AddressMudRecordsTable = ({
   toggleSorting,
   filters,
   setFilters,
-  toggleTableHasHorizontalScroll,
+  toggleTableHasHorisontalScroll,
   scrollRef,
   hash,
 }: Props) => {
@@ -60,8 +59,8 @@ const AddressMudRecordsTable = ({
   const toggleIsOpen = React.useCallback(() => {
     isOpened && tableRef.current?.scroll({ left: 0 });
     setIsOpened.toggle();
-    toggleTableHasHorizontalScroll();
-  }, [ setIsOpened, toggleTableHasHorizontalScroll, isOpened ]);
+    toggleTableHasHorisontalScroll();
+  }, [ setIsOpened, toggleTableHasHorisontalScroll, isOpened ]);
 
   const onRecordClick = React.useCallback((e: React.MouseEvent) => {
     if (e.metaKey || e.ctrlKey) {
@@ -110,18 +109,17 @@ const AddressMudRecordsTable = ({
 
   const colW = isMobile ? COL_MIN_WIDTH_MOBILE : COL_MIN_WIDTH;
 
-  const keys = (isOpened || !hasCut) ? data.schema.key_names : data.schema.key_names.slice(0, colsCutCount);
-  const values = (isOpened || !hasCut) ? data.schema.value_names : data.schema.value_names.slice(0, colsCutCount - data.schema.key_names.length);
-  const colsCount = (isOpened || !hasCut) ? totalColsCut : colsCutCount;
-
   const tdStyles: StyleProps = {
     wordBreak: 'break-word',
     whiteSpace: 'normal',
     minW: `${ colW }px`,
-    w: `${ 100 / colsCount }%`,
+    w: `${ colW }px`,
     verticalAlign: 'top',
     lineHeight: '20px',
   };
+
+  const keys = (isOpened || !hasCut) ? data.schema.key_names : data.schema.key_names.slice(0, colsCutCount);
+  const values = (isOpened || !hasCut) ? data.schema.value_names : data.schema.value_names.slice(0, colsCutCount - data.schema.key_names.length);
 
   const hasHorizontalScroll = isMobile || isOpened;
 
@@ -138,9 +136,9 @@ const AddressMudRecordsTable = ({
   );
 
   return (
-    // can't implement both horizontal table scroll and sticky header
+    // can't implement both horisontal table scroll and sticky header
     <Box maxW="100%" overflowX={ hasHorizontalScroll ? 'scroll' : 'unset' } whiteSpace="nowrap" ref={ tableRef }>
-      <Table style={{ tableLayout: 'fixed' }}>
+      <Table variant="simple" size="sm" style={{ tableLayout: 'fixed' }}>
         <Thead top={ hasHorizontalScroll ? 0 : top } display={ hasHorizontalScroll ? 'table' : 'table-header-group' } w="100%">
           <Tr >
             { keys.map((keyName, index) => {
@@ -187,7 +185,7 @@ const AddressMudRecordsTable = ({
               </Th>
             )) }
             { hasCut && !isOpened && cutButton }
-            <Th { ...tdStyles } w={ `${ colW }px` }>Modified</Th>
+            <Th { ...tdStyles }>Modified</Th>
             { hasCut && isOpened && cutButton }
           </Tr>
         </Thead>
@@ -206,13 +204,12 @@ const AddressMudRecordsTable = ({
                       { getValueString(item.decoded[keyName]) }
                     </LinkInternal>
                   ) : getValueString(item.decoded[keyName]) }
-                  <CopyToClipboard text={ item.decoded[keyName] }/>
                 </Td>
               )) }
               { values.map((valName) =>
                 <Td key={ valName } { ...tdStyles }>{ getValueString(item.decoded[valName]) }</Td>) }
               { hasCut && !isOpened && <Td width={ `${ CUT_COL_WIDTH }px ` }></Td> }
-              <Td { ...tdStyles } color="text_secondary" w={ `${ colW }px` }>{ dayjs(item.timestamp).format('lll') }</Td>
+              <Td { ...tdStyles } color="text_secondary">{ dayjs(item.timestamp).format('lll') }</Td>
               { hasCut && isOpened && <Td width={ `${ CUT_COL_WIDTH }px ` }></Td> }
             </Tr>
           )) }

@@ -1,4 +1,4 @@
-import { Td, Tr, HStack } from '@chakra-ui/react';
+import { Td, Tr, Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type { ArbitrumL2TxnBatchesItem } from 'types/api/arbitrumL2';
@@ -6,8 +6,6 @@ import type { ArbitrumL2TxnBatchesItem } from 'types/api/arbitrumL2';
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
-import ArbitrumL2TxnBatchDA from 'ui/shared/batch/ArbitrumL2TxnBatchDA';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import BatchEntityL2 from 'ui/shared/entities/block/BatchEntityL2';
 import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
 import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
@@ -37,10 +35,7 @@ const TxnBatchesTableItem = ({ item, isLoading }: Props) => {
         />
       </Td>
       <Td verticalAlign="middle">
-        <HStack gap={ 1 }>
-          <ArbitrumL2TxnBatchStatus status={ item.commitment_transaction.status } isLoading={ isLoading }/>
-          <ArbitrumL2TxnBatchDA dataContainer={ item.batch_data_container } isLoading={ isLoading }/>
-        </HStack>
+        <ArbitrumL2TxnBatchStatus status={ item.commitment_transaction.status } isLoading={ isLoading }/>
       </Td>
       <Td verticalAlign="middle">
         <BlockEntityL1

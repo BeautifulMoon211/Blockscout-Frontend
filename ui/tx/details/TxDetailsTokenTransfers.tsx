@@ -8,7 +8,8 @@ import { route } from 'nextjs-routes';
 import * as DetailsInfoItem from 'ui/shared/DetailsInfoItem';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
-import TokenTransferSnippet from 'ui/shared/TokenTransferSnippet/TokenTransferSnippet';
+
+import TxDetailsTokenTransfer from './TxDetailsTokenTransfer';
 
 interface Props {
   data: Array<TokenTransfer>;
@@ -53,7 +54,7 @@ const TxDetailsTokenTransfers = ({ data, txHash, isOverflow }: Props) => {
                 w="100%"
                 overflow="hidden"
               >
-                { items.map((item, index) => <TokenTransferSnippet key={ index } data={ item }/>) }
+                { items.map((item, index) => <TxDetailsTokenTransfer key={ index } data={ item }/>) }
               </Flex>
             </DetailsInfoItem.Value>
           </React.Fragment>

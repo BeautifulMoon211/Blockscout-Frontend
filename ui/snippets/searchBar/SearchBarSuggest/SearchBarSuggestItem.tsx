@@ -3,7 +3,6 @@ import NextLink from 'next/link';
 import React from 'react';
 
 import type { SearchResultItem } from 'types/client/search';
-import type { AddressFormat } from 'types/views/address';
 
 import { route } from 'nextjs-routes';
 
@@ -22,10 +21,9 @@ interface Props {
   isMobile: boolean | undefined;
   searchTerm: string;
   onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
-  addressFormat?: AddressFormat;
 }
 
-const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick, addressFormat }: Props) => {
+const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick }: Props) => {
 
   const url = (() => {
     switch (data.type) {
@@ -38,7 +36,7 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick, addressForm
         return route({ pathname: '/address/[hash]', query: { hash: data.address } });
       }
       case 'transaction': {
-        return route({ pathname: '/tx/[hash]', query: { hash: data.transaction_hash } });
+        return route({ pathname: '/tx/[hash]', query: { hash: data.tx_hash } });
       }
       case 'block': {
         const isFutureBlock = data.timestamp === undefined;
@@ -63,35 +61,15 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick, addressForm
   const content = (() => {
     switch (data.type) {
       case 'token': {
-        return (
-          <SearchBarSuggestToken
-            data={ data }
-            searchTerm={ searchTerm }
-            isMobile={ isMobile }
-            addressFormat={ addressFormat }
-          />
-        );
+        return <SearchBarSuggestToken data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
       }
       case 'contract':
       case 'address': {
-        return (
-          <SearchBarSuggestAddress
-            data={ data }
-            searchTerm={ searchTerm }
-            isMobile={ isMobile }
-            addressFormat={ addressFormat }
-          />
-        );
+        return <SearchBarSuggestAddress data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
       }
       case 'label': {
-        return (
-          <SearchBarSuggestLabel
-            data={ data }
-            searchTerm={ searchTerm }
-            isMobile={ isMobile }
-            addressFormat={ addressFormat }
-          />
-        );
+        return <SearchBarSuggestLabel data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
+
       }
       case 'block': {
         return <SearchBarSuggestBlock data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
@@ -106,7 +84,7 @@ const SearchBarSuggestItem = ({ data, isMobile, searchTerm, onClick, addressForm
         return <SearchBarSuggestBlob data={ data } searchTerm={ searchTerm }/>;
       }
       case 'ens_domain': {
-        return <SearchBarSuggestDomain data={ data } searchTerm={ searchTerm } isMobile={ isMobile } addressFormat={ addressFormat }/>;
+        return <SearchBarSuggestDomain data={ data } searchTerm={ searchTerm } isMobile={ isMobile }/>;
       }
     }
   })();

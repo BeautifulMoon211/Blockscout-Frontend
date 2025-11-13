@@ -19,22 +19,9 @@ export default function useScrollToActiveTab({ activeTabIndex, tabsRefs, listRef
         const activeTabRef = tabsRefs[activeTabIndex];
 
         if (activeTabRef.current && listRef.current) {
-          const containerWidth = listRef.current.getBoundingClientRect().width;
-          const activeTabWidth = activeTabRef.current.getBoundingClientRect().width;
-          const left = tabsRefs.slice(0, activeTabIndex)
-            .map((tab) => tab.current?.getBoundingClientRect())
-            .filter(Boolean)
-            .map((rect) => rect.width)
-            .reduce((result, item) => result + item, 0);
-
-          const isWithinFirstPage = containerWidth > left + activeTabWidth;
-
-          if (isWithinFirstPage) {
-            return;
-          }
-
+          const activeTabRect = activeTabRef.current.getBoundingClientRect();
           listRef.current.scrollTo({
-            left,
+            left: activeTabRect.left,
             behavior: 'smooth',
           });
         }

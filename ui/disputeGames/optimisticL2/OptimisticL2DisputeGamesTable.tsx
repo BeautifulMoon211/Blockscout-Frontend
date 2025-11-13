@@ -11,11 +11,11 @@ type Props = {
   items: Array<OptimisticL2DisputeGamesItem>;
   top: number;
   isLoading?: boolean;
-};
+}
 
 const OptimisticL2DisputeGamesTable = ({ items, top, isLoading }: Props) => {
   return (
-    <Table style={{ tableLayout: 'auto' }} minW="950px">
+    <Table variant="simple" size="sm" style={{ tableLayout: 'auto' }} minW="950px">
       <Thead top={ top }>
         <Tr>
           <Th>Index</Th>

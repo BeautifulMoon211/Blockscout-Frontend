@@ -1,5 +1,4 @@
-import { chakra } from '@chakra-ui/react';
-import capitalize from 'lodash/capitalize';
+import { chakra, Skeleton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -11,11 +10,8 @@ import { useAppContext } from 'lib/contexts/app';
 import throwOnAbsentParamError from 'lib/errors/throwOnAbsentParamError';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import useIsMobile from 'lib/hooks/useIsMobile';
-import getNetworkValidationActionText from 'lib/networks/getNetworkValidationActionText';
 import getQueryParamString from 'lib/router/getQueryParamString';
-import BlockCeloEpochTag from 'ui/block/BlockCeloEpochTag';
 import BlockDetails from 'ui/block/BlockDetails';
-import BlockEpochRewards from 'ui/block/BlockEpochRewards';
 import BlockWithdrawals from 'ui/block/BlockWithdrawals';
 import useBlockBlobTxsQuery from 'ui/block/useBlockBlobTxsQuery';
 import useBlockQuery from 'ui/block/useBlockQuery';
@@ -23,7 +19,6 @@ import useBlockTxsQuery from 'ui/block/useBlockTxsQuery';
 import useBlockWithdrawalsQuery from 'ui/block/useBlockWithdrawalsQuery';
 import TextAd from 'ui/shared/ad/TextAd';
 import ServiceDegradationWarning from 'ui/shared/alerts/ServiceDegradationWarning';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import NetworkExplorers from 'ui/shared/NetworkExplorers';
 import PageTitle from 'ui/shared/Page/PageTitle';
@@ -78,7 +73,7 @@ const BlockPageContent = () => {
         </>
       ),
     },
-    config.features.dataAvailability.isEnabled && blockQuery.data?.blob_transaction_count ?
+    config.features.dataAvailability.isEnabled && blockQuery.data?.blob_tx_count ?
       {
         id: 'blob_txs',
         title: 'Blob txns',
@@ -97,12 +92,7 @@ const BlockPageContent = () => {
           </>
         ),
       } : null,
-    blockQuery.data?.celo?.is_epoch_block ? {
-      id: 'epoch_rewards',
-      title: 'Epoch rewards',
-      component: <BlockEpochRewards heightOrHash={ heightOrHash }/>,
-    } : null,
-  ].filter(Boolean)), [ blockBlobTxsQuery, blockQuery, blockTxsQuery, blockWithdrawalsQuery, hasPagination, heightOrHash ]);
+  ].filter(Boolean)), [ blockBlobTxsQuery, blockQuery, blockTxsQuery, blockWithdrawalsQuery, hasPagination ]);
 
   let pagination;
   if (tab === 'txs') {
@@ -147,10 +137,9 @@ const BlockPageContent = () => {
         return `Block #${ blockQuery.data?.height }`;
     }
   })();
-
   const titleSecondRow = (
     <>
-      { !config.UI.views.block.hiddenFields?.miner && blockQuery.data?.miner && (
+      { !config.UI.views.block.hiddenFields?.miner && (
         <Skeleton
           isLoaded={ !blockQuery.isPlaceholderData }
           fontFamily="heading"
@@ -160,9 +149,9 @@ const BlockPageContent = () => {
           fontWeight={ 500 }
         >
           <chakra.span flexShrink={ 0 }>
-            { `${ capitalize(getNetworkValidationActionText()) } by` }
+            { config.chain.verificationType === 'validation' ? 'Validated by' : 'Mined by' }
           </chakra.span>
-          <AddressEntity address={ blockQuery.data.miner }/>
+          <AddressEntity address={ blockQuery.data?.miner }/>
         </Skeleton>
       ) }
       <NetworkExplorers type="block" pathParam={ heightOrHash } ml={{ base: config.UI.views.block.hiddenFields?.miner ? 0 : 3, lg: 'auto' }}/>
@@ -175,7 +164,6 @@ const BlockPageContent = () => {
       <PageTitle
         title={ title }
         backLink={ backLink }
-        contentAfter={ <BlockCeloEpochTag blockQuery={ blockQuery }/> }
         secondRow={ titleSecondRow }
         isLoading={ blockQuery.isPlaceholderData }
       />

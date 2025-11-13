@@ -37,7 +37,6 @@ const ContractVerificationVyperMultiPartFile = () => {
         name="interfaces"
         fileTypes={ INTERFACE_TYPES }
         multiple
-        fullFilePath
         title="Interfaces (.vy or .json)"
         hint={ interfacesHint }
       />

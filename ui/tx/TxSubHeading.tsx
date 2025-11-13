@@ -1,8 +1,6 @@
 import { Box, Flex, Link } from '@chakra-ui/react';
 import React from 'react';
 
-import type { AddressParam } from 'types/api/addressParams';
-
 import config from 'configs/app';
 import useApiQuery from 'lib/api/useApiQuery';
 import { NOVES_TRANSLATE } from 'stubs/noves/NovesTranslate';
@@ -19,10 +17,10 @@ import { createNovesSummaryObject } from './assetFlows/utils/createNovesSummaryO
 import type { TxQuery } from './useTxQuery';
 
 type Props = {
-  hash: string;
+  hash?: string;
   hasTag: boolean;
   txQuery: TxQuery;
-};
+}
 
 const feature = config.features.txInterpretation;
 
@@ -57,12 +55,16 @@ const TxSubHeading = ({ hash, hasTag, txQuery }: Props) => {
   const hasViewAllInterpretationsLink =
     !txInterpretationQuery.isPlaceholderData && txInterpretationQuery.data?.data.summaries && txInterpretationQuery.data?.data.summaries.length > 1;
 
-  const addressDataMap: Record<string, AddressParam> = {};
-  [ txQuery.data?.from, txQuery.data?.to ]
-    .filter((data): data is AddressParam => Boolean(data && data.hash))
-    .forEach(data => {
-      addressDataMap[data.hash] = data;
-    });
+  const hasAnyInterpretation =
+    (hasNovesInterpretation && novesInterpretationQuery.data && !novesInterpretationQuery.isPlaceholderData) ||
+    (hasInternalInterpretation && !txInterpretationQuery.isPlaceholderData);
+
+  const ensDomainNames: Record<string, string> = {};
+  [ txQuery.data?.from, txQuery.data?.to ].forEach(data => {
+    if (data?.hash && data?.ens_domain_name) {
+      ensDomainNames[data.hash] = data.ens_domain_name;
+    }
+  });
 
   const content = (() => {
     if (hasNovesInterpretation && novesInterpretationQuery.data) {
@@ -71,7 +73,7 @@ const TxSubHeading = ({ hash, hasTag, txQuery }: Props) => {
         <TxInterpretation
           summary={ novesSummary }
           isLoading={ novesInterpretationQuery.isPlaceholderData || txQuery.isPlaceholderData }
-          addressDataMap={ addressDataMap }
+          ensDomainNames={ ensDomainNames }
           fontSize="lg"
           mr={{ base: 0, lg: 6 }}
         />
@@ -82,7 +84,7 @@ const TxSubHeading = ({ hash, hasTag, txQuery }: Props) => {
           <TxInterpretation
             summary={ txInterpretationQuery.data?.data.summaries[0] }
             isLoading={ txInterpretationQuery.isPlaceholderData || txQuery.isPlaceholderData }
-            addressDataMap={ addressDataMap }
+            ensDomainNames={ ensDomainNames }
             fontSize="lg"
             mr={ hasViewAllInterpretationsLink ? 3 : 0 }
           />
@@ -136,7 +138,7 @@ const TxSubHeading = ({ hash, hasTag, txQuery }: Props) => {
         mt={{ base: 3, lg: 0 }}
       >
         { !hasTag && <AccountActionsMenu isLoading={ isLoading }/> }
-        { appActionData && (
+        { (appActionData && hasAnyInterpretation) && (
           <AppActionButton data={ appActionData } txHash={ hash } source="Txn"/>
         ) }
         <NetworkExplorers type="tx" pathParam={ hash } ml={{ base: 0, lg: 'auto' }}/>

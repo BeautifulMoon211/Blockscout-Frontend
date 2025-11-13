@@ -1,10 +1,9 @@
-import { Box, Image, useColorModeValue, chakra } from '@chakra-ui/react';
+import { Box, Image, useColorModeValue, Skeleton, chakra } from '@chakra-ui/react';
 import React from 'react';
 
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import IconSvg from 'ui/shared/IconSvg';
 
 interface Props {
@@ -15,7 +14,7 @@ interface Props {
 
 const LogoFallback = ({ isCollapsed, isSmall }: { isCollapsed?: boolean; isSmall?: boolean }) => {
   const field = isSmall ? 'icon' : 'logo';
-  const logoColor = useColorModeValue('blue.600', 'white');
+  const logoColor = useColorModeValue('#4361ee', 'white');
 
   const display = isSmall ? {
     base: 'none',

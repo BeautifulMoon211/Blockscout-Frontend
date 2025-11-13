@@ -1,10 +1,9 @@
 import { useColorMode } from '@chakra-ui/react';
-import { createAppKit, useAppKitTheme } from '@reown/appkit/react';
+import { createWeb3Modal, useWeb3ModalTheme } from '@web3modal/wagmi/react';
 import React from 'react';
 import { WagmiProvider } from 'wagmi';
 
 import config from 'configs/app';
-import currentChain from 'lib/web3/currentChain';
 import wagmiConfig from 'lib/web3/wagmiConfig';
 import colors from 'theme/foundations/colors';
 import { BODY_TYPEFACE } from 'theme/foundations/typography';
@@ -14,32 +13,18 @@ const feature = config.features.blockchainInteraction;
 
 const init = () => {
   try {
-    if (!feature.isEnabled || !wagmiConfig.adapter) {
+    if (!feature.isEnabled) {
       return;
     }
 
-    createAppKit({
-      adapters: [ wagmiConfig.adapter ],
-      networks: [ currentChain ],
-      metadata: {
-        name: `${ config.chain.name } explorer`,
-        description: `${ config.chain.name } explorer`,
-        url: config.app.baseUrl,
-        icons: [ config.UI.navigation.icon.default ].filter(Boolean),
-      },
+    createWeb3Modal({
+      wagmiConfig,
       projectId: feature.walletConnect.projectId,
-      features: {
-        analytics: false,
-        email: true,
-        socials: [],
-        onramp: false,
-        swaps: false,
-      },
       themeVariables: {
         '--w3m-font-family': `${ BODY_TYPEFACE }, sans-serif`,
         '--w3m-accent': colors.blue[600],
         '--w3m-border-radius-master': '2px',
-        '--w3m-z-index': zIndices.popover,
+        '--w3m-z-index': zIndices.modal,
       },
       featuredWalletIds: [],
       allowUnsupportedChain: true,
@@ -55,7 +40,7 @@ interface Props {
 
 const DefaultProvider = ({ children }: Props) => {
   return (
-    <WagmiProvider config={ wagmiConfig.config }>
+    <WagmiProvider config={ wagmiConfig }>
       { children }
     </WagmiProvider>
   );
@@ -63,7 +48,7 @@ const DefaultProvider = ({ children }: Props) => {
 
 const Web3ModalProvider = ({ children }: Props) => {
   const { colorMode } = useColorMode();
-  const { setThemeMode } = useAppKitTheme();
+  const { setThemeMode } = useWeb3ModalTheme();
 
   React.useEffect(() => {
     setThemeMode(colorMode);

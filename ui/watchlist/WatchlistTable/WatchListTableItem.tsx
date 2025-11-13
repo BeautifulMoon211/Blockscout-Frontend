@@ -2,6 +2,7 @@ import {
   Tr,
   Td,
   Switch,
+  Skeleton,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import React, { useCallback, useState } from 'react';
@@ -10,7 +11,6 @@ import type { WatchlistAddress } from 'types/api/account';
 
 import useApiFetch from 'lib/api/useApiFetch';
 import useToast from 'lib/hooks/useToast';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import Tag from 'ui/shared/chakra/Tag';
 import TableItemActionButtons from 'ui/shared/TableItemActionButtons';
 
@@ -21,10 +21,9 @@ interface Props {
   isLoading?: boolean;
   onEditClick: (data: WatchlistAddress) => void;
   onDeleteClick: (data: WatchlistAddress) => void;
-  hasEmail: boolean;
 }
 
-const WatchlistTableItem = ({ item, isLoading, onEditClick, onDeleteClick, hasEmail }: Props) => {
+const WatchlistTableItem = ({ item, isLoading, onEditClick, onDeleteClick }: Props) => {
   const [ notificationEnabled, setNotificationEnabled ] = useState(item.notification_methods.email);
   const [ switchDisabled, setSwitchDisabled ] = useState(false);
   const onItemEditClick = useCallback(() => {
@@ -54,7 +53,7 @@ const WatchlistTableItem = ({ item, isLoading, onEditClick, onDeleteClick, hasEm
   const showNotificationToast = useCallback((isOn: boolean) => {
     notificationToast({
       position: 'top-right',
-      description: !isOn ? 'Email notification is ON' : 'Email notification is OFF',
+      description: isOn ? 'Email notification is ON' : 'Email notification is OFF',
       colorScheme: 'green',
       status: 'success',
       variant: 'subtle',
@@ -70,7 +69,7 @@ const WatchlistTableItem = ({ item, isLoading, onEditClick, onDeleteClick, hasEm
       const body = { ...item, notification_methods: { email: !notificationEnabled } };
       setNotificationEnabled(prevState => !prevState);
       return apiFetch('watchlist', {
-        pathParams: { id: String(item.id) },
+        pathParams: { id: item.id },
         fetchParams: { method: 'PUT', body },
       });
     },
@@ -102,7 +101,7 @@ const WatchlistTableItem = ({ item, isLoading, onEditClick, onDeleteClick, hasEm
             size="md"
             isChecked={ notificationEnabled }
             onChange={ onSwitch }
-            isDisabled={ !hasEmail || switchDisabled }
+            isDisabled={ switchDisabled }
             aria-label="Email notification"
           />
         </Skeleton>

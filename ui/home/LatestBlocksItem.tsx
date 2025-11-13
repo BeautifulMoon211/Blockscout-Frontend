@@ -2,7 +2,7 @@ import {
   Box,
   Flex,
   Grid,
-  Tooltip,
+  Skeleton,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import React from 'react';
@@ -12,16 +12,14 @@ import type { Block } from 'types/api/block';
 import config from 'configs/app';
 import getBlockTotalReward from 'lib/block/getBlockTotalReward';
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import BlockEntity from 'ui/shared/entities/block/BlockEntity';
-import IconSvg from 'ui/shared/IconSvg';
 import TimeAgoWithTooltip from 'ui/shared/TimeAgoWithTooltip';
 
 type Props = {
   block: Block;
   isLoading?: boolean;
-};
+}
 
 const LatestBlocksItem = ({ block, isLoading }: Props) => {
   const totalReward = getBlockTotalReward(block);
@@ -48,11 +46,6 @@ const LatestBlocksItem = ({ block, isLoading }: Props) => {
           fontWeight={ 500 }
           mr="auto"
         />
-        { block.celo?.is_epoch_block && (
-          <Tooltip label={ `Finalized epoch #${ block.celo.epoch_number }` }>
-            <IconSvg name="checkered_flag" boxSize={ 5 } p="1px" ml={ 2 } isLoading={ isLoading } flexShrink={ 0 }/>
-          </Tooltip>
-        ) }
         <TimeAgoWithTooltip
           timestamp={ block.timestamp }
           enableIncrement={ !isLoading }
@@ -67,7 +60,7 @@ const LatestBlocksItem = ({ block, isLoading }: Props) => {
       </Flex>
       <Grid gridGap={ 2 } templateColumns="auto minmax(0, 1fr)" fontSize="sm">
         <Skeleton isLoaded={ !isLoading }>Txn</Skeleton>
-        <Skeleton isLoaded={ !isLoading } color="text_secondary"><span>{ block.transaction_count }</span></Skeleton>
+        <Skeleton isLoaded={ !isLoading } color="text_secondary"><span>{ block.tx_count }</span></Skeleton>
 
         { !config.features.rollup.isEnabled && !config.UI.views.block.hiddenFields?.total_reward && (
           <>

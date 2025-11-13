@@ -1,11 +1,10 @@
-import { Tr, Td, Flex } from '@chakra-ui/react';
+import { Tr, Td, Flex, Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type { AddressTokenBalance } from 'types/api/address';
 
 import getCurrencyValue from 'lib/getCurrencyValue';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import TokenEntity from 'ui/shared/entities/token/TokenEntity';
 
@@ -24,7 +23,11 @@ const ERC20TokensTableItem = ({
 
   return (
     <Tr
-      role="group"
+      sx={{
+        '&:hover [aria-label="Add token to wallet"]': {
+          opacity: 1,
+        },
+      }}
     >
       <Td verticalAlign="middle">
         <TokenEntity
@@ -43,7 +46,7 @@ const ERC20TokensTableItem = ({
             truncation="constant"
             noIcon
           />
-          <AddressAddToWallet token={ token } ml={ 4 } isLoading={ isLoading } opacity="0" _groupHover={{ opacity: 1 }}/>
+          <AddressAddToWallet token={ token } ml={ 4 } isLoading={ isLoading } opacity="0"/>
         </Flex>
       </Td>
       <Td isNumeric verticalAlign="middle">

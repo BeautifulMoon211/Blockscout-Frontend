@@ -1,9 +1,7 @@
 export const light = {
   base: 'vs' as const,
   inherit: true,
-  rules: [
-    { token: 'predefined', foreground: '#cd3131' },
-  ],
+  rules: [],
   colors: {
     'editor.background': '#f5f5f6',
     'editorWidget.background': '#f5f5f6',
@@ -47,9 +45,7 @@ export const light = {
 export const dark = {
   base: 'vs-dark' as const,
   inherit: true,
-  rules: [
-    { token: 'predefined', foreground: '#f44747' },
-  ],
+  rules: [],
   colors: {
     'editor.background': '#1a1b1b',
     'editorWidget.background': '#1a1b1b',

@@ -1,9 +1,7 @@
-import { chakra } from '@chakra-ui/react';
+import { Skeleton, chakra } from '@chakra-ui/react';
 import React from 'react';
 
 import type { Step } from './types';
-
-import Skeleton from 'ui/shared/chakra/Skeleton';
 
 import VerificationStep from './VerificationStep';
 

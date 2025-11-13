@@ -6,17 +6,17 @@ import { test, expect } from 'playwright/lib';
 import EnsEntity from './EnsEntity';
 
 const name = 'cat.eth';
-const iconSizes = [ 'md', 'lg' ] as const;
+const iconSizes = [ 'md', 'lg' ];
 
 test.use({ viewport: { width: 180, height: 30 } });
 
 test.describe('icon size', () => {
   iconSizes.forEach((size) => {
-    test(`${ size }`, async({ render }) => {
+    test(size, async({ render }) => {
       const component = await render(
         <EnsEntity
-          domain={ name }
-          icon={{ size }}
+          name={ name }
+          iconSize={ size }
         />,
       );
 
@@ -28,7 +28,7 @@ test.describe('icon size', () => {
 test('loading', async({ render }) => {
   const component = await render(
     <EnsEntity
-      domain={ name }
+      name={ name }
       isLoading
     />,
   );
@@ -39,7 +39,7 @@ test('loading', async({ render }) => {
 test('with long name', async({ render }) => {
   const component = await render(
     <EnsEntity
-      domain="kitty.kitty.kitty.cat.eth"
+      name="kitty.kitty.kitty.cat.eth"
     />,
   );
 
@@ -51,25 +51,24 @@ test('with long name', async({ render }) => {
 test('customization', async({ render }) => {
   const component = await render(
     <EnsEntity
-      domain={ name }
+      name={ name }
       p={ 3 }
       borderWidth="1px"
-      borderColor="blue.700"
+      borderColor="#3f37c9"
     />,
   );
 
   await expect(component).toHaveScreenshot();
 });
 
-test.describe('tooltip test', () => {
+test.describe('', () => {
   test.use({ viewport: { width: 300, height: 400 } });
-
   test('with protocol info', async({ render, page, mockAssetResponse }) => {
     await mockAssetResponse(domainMock.ensDomainA.protocol?.icon_url as string, './playwright/mocks/image_s.jpg');
 
     const component = await render(
       <EnsEntity
-        domain={ name }
+        name={ name }
         protocol={ domainMock.protocolA }
       />,
     );

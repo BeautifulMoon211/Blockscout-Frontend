@@ -1,26 +1,64 @@
-import { Flex, IconButton, Text } from '@chakra-ui/react';
+import { Flex, FormControl, IconButton, Input, Text } from '@chakra-ui/react';
 import React from 'react';
+import type { Control, ControllerRenderProps, FieldError } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 import type { FormFields } from '../types';
 
-import FormFieldAddress from 'ui/shared/forms/fields/FormFieldAddress';
-import FormFieldText from 'ui/shared/forms/fields/FormFieldText';
+import { ADDRESS_REGEXP } from 'lib/validations/address';
 import IconSvg from 'ui/shared/IconSvg';
+import InputPlaceholder from 'ui/shared/InputPlaceholder';
 
 import ContractVerificationFormRow from '../ContractVerificationFormRow';
 
 const LIMIT = 10;
 
 interface Props {
+  control: Control<FormFields>;
   index: number;
   fieldsLength: number;
+  error?: {
+    name?: FieldError;
+    address?: FieldError;
+  };
   onAddFieldClick: (index: number) => void;
   onRemoveFieldClick: (index: number) => void;
   isDisabled?: boolean;
 }
 
-const ContractVerificationFieldLibraryItem = ({ index, fieldsLength, onAddFieldClick, onRemoveFieldClick, isDisabled }: Props) => {
+const ContractVerificationFieldLibraryItem = ({ control, index, fieldsLength, onAddFieldClick, onRemoveFieldClick, error, isDisabled }: Props) => {
   const ref = React.useRef<HTMLDivElement>(null);
+
+  const renderNameControl = React.useCallback(({ field }: {field: ControllerRenderProps<FormFields, `libraries.${ number }.name`>}) => {
+    return (
+      <FormControl variant="floating" id={ field.name } isRequired size={{ base: 'md', lg: 'lg' }}>
+        <Input
+          { ...field }
+          required
+          isInvalid={ Boolean(error?.name) }
+          isDisabled={ isDisabled }
+          maxLength={ 255 }
+          autoComplete="off"
+        />
+        <InputPlaceholder text="Library name (.sol file)" error={ error?.name }/>
+      </FormControl>
+    );
+  }, [ error?.name, isDisabled ]);
+
+  const renderAddressControl = React.useCallback(({ field }: {field: ControllerRenderProps<FormFields, `libraries.${ number }.address`>}) => {
+    return (
+      <FormControl variant="floating" id={ field.name } isRequired size={{ base: 'md', lg: 'lg' }}>
+        <Input
+          { ...field }
+          isInvalid={ Boolean(error?.address) }
+          isDisabled={ isDisabled }
+          required
+          autoComplete="off"
+        />
+        <InputPlaceholder text="Library address (0x...)" error={ error?.address }/>
+      </FormControl>
+    );
+  }, [ error?.address, isDisabled ]);
 
   const handleAddButtonClick = React.useCallback(() => {
     onAddFieldClick(index);
@@ -66,12 +104,11 @@ const ContractVerificationFieldLibraryItem = ({ index, fieldsLength, onAddFieldC
         </Flex>
       </ContractVerificationFormRow>
       <ContractVerificationFormRow>
-        <FormFieldText<FormFields, `libraries.${ number }.name`>
+        <Controller
           name={ `libraries.${ index }.name` }
-          isRequired
-          rules={{ maxLength: 255 }}
-          placeholder="Library name (.sol file)"
-          size={{ base: 'md', lg: 'lg' }}
+          control={ control }
+          render={ renderNameControl }
+          rules={{ required: true }}
         />
         { index === 0 ? (
           <>
@@ -80,15 +117,15 @@ const ContractVerificationFieldLibraryItem = ({ index, fieldsLength, onAddFieldC
         ) : null }
       </ContractVerificationFormRow>
       <ContractVerificationFormRow>
-        <FormFieldAddress<FormFields, `libraries.${ number }.address`>
+        <Controller
           name={ `libraries.${ index }.address` }
-          isRequired
-          placeholder="Library address (0x...)"
-          size={{ base: 'md', lg: 'lg' }}
+          control={ control }
+          render={ renderAddressControl }
+          rules={{ required: true, pattern: ADDRESS_REGEXP }}
         />
         { index === 0 ? (
           <>
-            The 0x library address. This can be found in the generated json file or Truffle output (if using truffle).
+              The 0x library address. This can be found in the generated json file or Truffle output (if using truffle).
           </>
         ) : null }
       </ContractVerificationFormRow>

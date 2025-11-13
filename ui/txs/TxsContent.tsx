@@ -19,7 +19,6 @@ import TxsTable from './TxsTable';
 const SORT_SEQUENCE: Record<TransactionsSortingField, Array<TransactionsSortingValue | undefined>> = {
   value: [ 'value-desc', 'value-asc', undefined ],
   fee: [ 'fee-desc', 'fee-asc', undefined ],
-  block_number: [ 'block_number-asc', undefined ],
 };
 
 type Props = {
@@ -39,7 +38,7 @@ type Props = {
   isError: boolean;
   setSorting: (value: TransactionsSortingValue | undefined) => void;
   sort: TransactionsSortingValue | undefined;
-};
+}
 
 const TxsContent = ({
   query,

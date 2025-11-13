@@ -1,12 +1,10 @@
 import { Box } from '@chakra-ui/react';
-import type { UseQueryResult } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import type { SocketMessage } from 'lib/socket/types';
 import type { TokenInfo } from 'types/api/token';
 
-import type { ResourceError } from 'lib/api/resources';
 import useGradualIncrement from 'lib/hooks/useGradualIncrement';
 import useIsMobile from 'lib/hooks/useIsMobile';
 import useIsMounted from 'lib/hooks/useIsMounted';
@@ -25,16 +23,15 @@ const TABS_HEIGHT = 88;
 type Props = {
   transfersQuery: QueryWithPagesResult<'token_transfers'> | QueryWithPagesResult<'token_instance_transfers'>;
   tokenId?: string;
-  tokenQuery: UseQueryResult<TokenInfo, ResourceError<unknown>>;
+  token?: TokenInfo;
   shouldRender?: boolean;
-};
+}
 
-const TokenTransfer = ({ transfersQuery, tokenId, tokenQuery, shouldRender = true }: Props) => {
+const TokenTransfer = ({ transfersQuery, tokenId, token, shouldRender = true }: Props) => {
   const isMobile = useIsMobile();
   const isMounted = useIsMounted();
   const router = useRouter();
   const { isError, isPlaceholderData, data, pagination } = transfersQuery;
-  const { data: token, isPlaceholderData: isTokenPlaceholderData, isError: isTokenError } = tokenQuery;
 
   const [ newItemsCount, setNewItemsCount ] = useGradualIncrement(0);
   const [ socketAlert, setSocketAlert ] = React.useState('');
@@ -67,9 +64,7 @@ const TokenTransfer = ({ transfersQuery, tokenId, tokenQuery, shouldRender = tru
     return null;
   }
 
-  const isLoading = isPlaceholderData || isTokenPlaceholderData;
-
-  const content = data?.items && token ? (
+  const content = data?.items ? (
     <>
       <Box display={{ base: 'none', lg: 'block' }}>
         <TokenTransferTable
@@ -80,7 +75,7 @@ const TokenTransfer = ({ transfersQuery, tokenId, tokenQuery, shouldRender = tru
           socketInfoNum={ newItemsCount }
           tokenId={ tokenId }
           token={ token }
-          isLoading={ isLoading }
+          isLoading={ isPlaceholderData }
         />
       </Box>
       <Box display={{ base: 'block', lg: 'none' }}>
@@ -90,10 +85,10 @@ const TokenTransfer = ({ transfersQuery, tokenId, tokenQuery, shouldRender = tru
             num={ newItemsCount }
             alert={ socketAlert }
             type="token_transfer"
-            isLoading={ isLoading }
+            isLoading={ isPlaceholderData }
           />
         ) }
-        <TokenTransferList data={ data?.items } tokenId={ tokenId } isLoading={ isLoading }/>
+        <TokenTransferList data={ data?.items } tokenId={ tokenId } isLoading={ isPlaceholderData }/>
       </Box>
     </>
   ) : null;
@@ -106,7 +101,7 @@ const TokenTransfer = ({ transfersQuery, tokenId, tokenQuery, shouldRender = tru
 
   return (
     <DataListDisplay
-      isError={ isError || isTokenError }
+      isError={ isError }
       items={ data?.items }
       emptyText="There are no token transfers."
       content={ content }

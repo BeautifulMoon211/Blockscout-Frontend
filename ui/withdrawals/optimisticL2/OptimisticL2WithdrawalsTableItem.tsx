@@ -1,11 +1,10 @@
-import { Td, Tr } from '@chakra-ui/react';
+import { Td, Tr, Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type { OptimisticL2WithdrawalsItem } from 'types/api/optimisticL2';
 
 import config from 'configs/app';
 import dayjs from 'lib/date/dayjs';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import TxEntity from 'ui/shared/entities/tx/TxEntity';
 import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
@@ -40,7 +39,7 @@ const OptimisticL2WithdrawalsTableItem = ({ item, isLoading }: Props) => {
       <Td verticalAlign="middle">
         <TxEntity
           isLoading={ isLoading }
-          hash={ item.l2_transaction_hash }
+          hash={ item.l2_tx_hash }
           fontSize="sm"
           lineHeight={ 5 }
           truncation="constant_long"
@@ -63,10 +62,10 @@ const OptimisticL2WithdrawalsTableItem = ({ item, isLoading }: Props) => {
         }
       </Td>
       <Td verticalAlign="middle">
-        { item.l1_transaction_hash ? (
+        { item.l1_tx_hash ? (
           <TxEntityL1
             isLoading={ isLoading }
-            hash={ item.l1_transaction_hash }
+            hash={ item.l1_tx_hash }
             truncation="constant_long"
             noIcon
             fontSize="sm"

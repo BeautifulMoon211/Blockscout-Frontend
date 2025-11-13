@@ -1,19 +1,21 @@
 import { Grid, Text, Flex } from '@chakra-ui/react';
 import React from 'react';
 
-import type { ItemsProps } from './types';
 import type { SearchResultDomain } from 'types/api/search';
 
-import { toBech32Address } from 'lib/address/bech32';
 import dayjs from 'lib/date/dayjs';
 import highlightText from 'lib/highlightText';
-import * as EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 import IconSvg from 'ui/shared/IconSvg';
 
-const SearchBarSuggestDomain = ({ data, isMobile, searchTerm, addressFormat }: ItemsProps<SearchResultDomain>) => {
-  const icon = <EnsEntity.Icon protocol={ data.ens_info.protocol }/>;
-  const hash = data.filecoin_robust_address || (addressFormat === 'bech32' ? toBech32Address(data.address) : data.address);
+interface Props {
+  data: SearchResultDomain;
+  isMobile: boolean | undefined;
+  searchTerm: string;
+}
+
+const SearchBarSuggestDomain = ({ data, isMobile, searchTerm }: Props) => {
+  const icon = <IconSvg name="ENS_slim" boxSize={ 5 } color="gray.500"/>;
 
   const name = (
     <Text
@@ -32,7 +34,7 @@ const SearchBarSuggestDomain = ({ data, isMobile, searchTerm, addressFormat }: I
       whiteSpace="nowrap"
       variant="secondary"
     >
-      <HashStringShortenDynamic hash={ hash } isTooltipDisabled/>
+      <HashStringShortenDynamic hash={ data.address } isTooltipDisabled/>
     </Text>
   );
 

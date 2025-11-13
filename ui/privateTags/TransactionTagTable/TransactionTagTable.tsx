@@ -22,7 +22,7 @@ interface Props {
 
 const AddressTagTable = ({ data, isLoading, onDeleteClick, onEditClick, top }: Props) => {
   return (
-    <Table minWidth="600px">
+    <Table variant="simple" minWidth="600px">
       <TheadSticky top={ top }>
         <Tr>
           <Th width="75%">Transaction</Th>
@@ -33,7 +33,7 @@ const AddressTagTable = ({ data, isLoading, onDeleteClick, onEditClick, top }: P
       <Tbody>
         { data?.map((item, index) => (
           <TransactionTagTableItem
-            key={ item.id + (isLoading ? String(index) : '') }
+            key={ item.id + (isLoading ? index : '') }
             item={ item }
             isLoading={ isLoading }
             onDeleteClick={ onDeleteClick }

@@ -1,34 +1,33 @@
-import { Alert, Button, Flex } from '@chakra-ui/react';
+import { Alert, Button, Flex, Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import config from 'configs/app';
 import useIsMobile from 'lib/hooks/useIsMobile';
-import useWeb3Wallet from 'lib/web3/useWallet';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
+import useWallet from 'ui/snippets/walletMenu/useWallet';
 
 interface Props {
   isLoading?: boolean;
 }
 
 const ContractConnectWallet = ({ isLoading }: Props) => {
-  const web3Wallet = useWeb3Wallet({ source: 'Smart contracts' });
+  const { isModalOpening, isModalOpen, connect, disconnect, address, isWalletConnected } = useWallet({ source: 'Smart contracts' });
   const isMobile = useIsMobile();
 
   const content = (() => {
-    if (!web3Wallet.isConnected) {
+    if (!isWalletConnected) {
       return (
         <>
           <span>Disconnected</span>
           <Button
             ml={ 3 }
-            onClick={ web3Wallet.connect }
+            onClick={ connect }
             size="sm"
             variant="outline"
-            isLoading={ web3Wallet.isOpen }
+            isLoading={ isModalOpening || isModalOpen }
             loadingText="Connect wallet"
           >
-            Connect wallet
+              Connect wallet
           </Button>
         </>
       );
@@ -39,21 +38,20 @@ const ContractConnectWallet = ({ isLoading }: Props) => {
         <Flex alignItems="center">
           <span>Connected to </span>
           <AddressEntity
-            address={{ hash: web3Wallet.address || '' }}
+            address={{ hash: address }}
             truncation={ isMobile ? 'constant' : 'dynamic' }
             fontWeight={ 600 }
             ml={ 2 }
-            noAltHash
           />
         </Flex>
-        <Button onClick={ web3Wallet.disconnect } size="sm" variant="outline">Disconnect</Button>
+        <Button onClick={ disconnect } size="sm" variant="outline">Disconnect</Button>
       </Flex>
     );
   })();
 
   return (
-    <Skeleton isLoaded={ !isLoading }>
-      <Alert status={ web3Wallet.address ? 'success' : 'warning' }>
+    <Skeleton isLoaded={ !isLoading } mb={ 6 }>
+      <Alert status={ address ? 'success' : 'warning' }>
         { content }
       </Alert>
     </Skeleton>

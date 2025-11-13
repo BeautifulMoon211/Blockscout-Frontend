@@ -1,5 +1,5 @@
 export interface VerifiedContractsSorting {
-  sort: 'balance' | 'transactions_count';
+  sort: 'balance' | 'txs_count';
   order: 'asc' | 'desc';
 }
 

@@ -7,6 +7,7 @@ import config from 'configs/app';
 import { sortByDateDesc } from 'ui/shared/chart/utils/sorts';
 import IconSvg from 'ui/shared/IconSvg';
 import NativeTokenIcon from 'ui/shared/NativeTokenIcon';
+import TokenLogoPlaceholder from 'ui/shared/TokenLogoPlaceholder';
 
 const nonNullTailReducer = (result: Array<TimeChartItemRaw>, item: TimeChartItemRaw) => {
   if (item.value === null && result.length === 0) {
@@ -30,7 +31,7 @@ const dailyTxsIndicator: TChainIndicator<'stats_charts_txs'> = {
     resourceName: 'stats_charts_txs',
     dataFn: (response) => ([ {
       items: response.chart_data
-        .map((item) => ({ date: new Date(item.date), value: item.transaction_count }))
+        .map((item) => ({ date: new Date(item.date), value: item.tx_count }))
         .sort(sortByDateDesc)
         .reduceRight(nonNullTailReducer, [] as Array<TimeChartItemRaw>)
         .map(mapNullToZero),
@@ -70,7 +71,7 @@ const secondaryCoinPriceIndicator: TChainIndicator<'stats_charts_secondary_coin_
     '$N/A' :
     '$' + Number(stats.secondary_coin_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }),
   valueDiff: () => null,
-  icon: <NativeTokenIcon boxSize={ 6 } type="secondary"/>,
+  icon: <TokenLogoPlaceholder boxSize={ 6 }/>,
   hint: `${ config.chain.secondaryCoin.symbol } token daily price in USD.`,
   api: {
     resourceName: 'stats_charts_secondary_coin_price',
@@ -130,6 +131,7 @@ const tvlIndicator: TChainIndicator<'stats_charts_market'> = {
     '$N/A' :
     '$' + Number(stats.tvl).toLocaleString(undefined, { maximumFractionDigits: 2, notation: 'compact' }),
   icon: <IconSvg name="lock" boxSize={ 6 } bgColor="#517FDB" borderRadius="base" color="white"/>,
+  // eslint-disable-next-line max-len
   hint: 'Total value of digital assets locked or staked in a chain',
   api: {
     resourceName: 'stats_charts_market',

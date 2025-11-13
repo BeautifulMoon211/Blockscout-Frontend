@@ -44,17 +44,6 @@ test.describe('mobile', () => {
     });
   });
 
-  test('filecoin', async({ render, mockApiResponse, page }) => {
-    await mockApiResponse('address', addressMock.filecoin, { pathParams: { hash: ADDRESS_HASH } });
-    await mockApiResponse('address_counters', countersMock.forValidator, { pathParams: { hash: ADDRESS_HASH } });
-
-    const component = await render(<AddressDetails addressQuery={{ data: addressMock.filecoin } as AddressQuery}/>, { hooksConfig });
-
-    await expect(component).toHaveScreenshot({
-      mask: [ page.locator(pwConfig.adsBannerSelector) ],
-      maskColor: pwConfig.maskColor,
-    });
-  });
 });
 
 test('contract', async({ render, page, mockApiResponse }) => {
@@ -97,18 +86,6 @@ test('validator', async({ render, mockApiResponse, page }) => {
   await mockApiResponse('address_counters', countersMock.forValidator, { pathParams: { hash: ADDRESS_HASH } });
 
   const component = await render(<AddressDetails addressQuery={{ data: addressMock.validator } as AddressQuery}/>, { hooksConfig });
-
-  await expect(component).toHaveScreenshot({
-    mask: [ page.locator(pwConfig.adsBannerSelector) ],
-    maskColor: pwConfig.maskColor,
-  });
-});
-
-test('filecoin', async({ render, mockApiResponse, page }) => {
-  await mockApiResponse('address', addressMock.filecoin, { pathParams: { hash: ADDRESS_HASH } });
-  await mockApiResponse('address_counters', countersMock.forValidator, { pathParams: { hash: ADDRESS_HASH } });
-
-  const component = await render(<AddressDetails addressQuery={{ data: addressMock.filecoin } as AddressQuery}/>, { hooksConfig });
 
   await expect(component).toHaveScreenshot({
     mask: [ page.locator(pwConfig.adsBannerSelector) ],

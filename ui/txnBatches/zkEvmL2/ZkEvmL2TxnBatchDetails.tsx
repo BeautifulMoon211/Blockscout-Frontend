@@ -1,4 +1,4 @@
-import { Grid, Text } from '@chakra-ui/react';
+import { Grid, Text, Skeleton } from '@chakra-ui/react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -11,7 +11,6 @@ import { route } from 'nextjs-routes';
 import type { ResourceError } from 'lib/api/resources';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import DataFetchAlert from 'ui/shared/DataFetchAlert';
 import * as DetailsInfoItem from 'ui/shared/DetailsInfoItem';
@@ -65,7 +64,7 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
       <DetailsInfoItem.Label
         isLoading={ isPlaceholderData }
       >
-        Txn batch number
+        Tx batch number
       </DetailsInfoItem.Label>
       <DetailsInfoItem.Value>
         <Skeleton isLoaded={ !isPlaceholderData }>
@@ -74,8 +73,8 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
         <PrevNext
           ml={ 6 }
           onClick={ handlePrevNextClick }
-          prevLabel="View previous txn batch"
-          nextLabel="View next txn batch"
+          prevLabel="View previous tx batch"
+          nextLabel="View next tx batch"
           isPrevDisabled={ data.number === 0 }
           isLoading={ isPlaceholderData }
         />
@@ -105,10 +104,10 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
         Verify tx hash
       </DetailsInfoItem.Label>
       <DetailsInfoItem.Value>
-        { data.verify_transaction_hash ? (
+        { data.verify_tx_hash ? (
           <TxEntityL1
             isLoading={ isPlaceholderData }
-            hash={ data.verify_transaction_hash }
+            hash={ data.verify_tx_hash }
             maxW="100%"
           />
         ) : <Text>Pending</Text> }
@@ -163,10 +162,10 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
         Sequence tx hash
       </DetailsInfoItem.Label>
       <DetailsInfoItem.Value>
-        { data.sequence_transaction_hash ? (
+        { data.sequence_tx_hash ? (
           <TxEntityL1
             isLoading={ isPlaceholderData }
-            hash={ data.sequence_transaction_hash }
+            hash={ data.sequence_tx_hash }
             maxW="100%"
           />
         ) : <Text>Pending</Text> }

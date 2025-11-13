@@ -1,4 +1,3 @@
-import type { TokenInfo } from 'types/api/token';
 import type { TokenTransfer, TokenTransferResponse } from 'types/api/tokenTransfer';
 
 export const erc20: TokenTransfer = {
@@ -40,10 +39,9 @@ export const erc20: TokenTransfer = {
     decimals: '18',
     value: '31567373703130350',
   },
-  transaction_hash: '0x62d597ebcf3e8d60096dd0363bc2f0f5e2df27ba1dacd696c51aa7c9409f3193',
+  tx_hash: '0x62d597ebcf3e8d60096dd0363bc2f0f5e2df27ba1dacd696c51aa7c9409f3193',
   type: 'token_transfer',
   timestamp: '2022-10-10T14:34:30.000000Z',
-  block_number: '12345',
   block_hash: '1',
   log_index: '1',
   method: 'updateSmartAsset',
@@ -87,10 +85,9 @@ export const erc721: TokenTransfer = {
   total: {
     token_id: '875879856',
   },
-  transaction_hash: '0xf13bc7afe5e02b494dd2f22078381d36a4800ef94a0ccc147431db56c301e6cc',
+  tx_hash: '0xf13bc7afe5e02b494dd2f22078381d36a4800ef94a0ccc147431db56c301e6cc',
   type: 'token_transfer',
   timestamp: '2022-10-10T14:34:30.000000Z',
-  block_number: '12345',
   block_hash: '1',
   log_index: '1',
   method: 'updateSmartAsset',
@@ -136,10 +133,9 @@ export const erc1155A: TokenTransfer = {
     value: '42',
     decimals: null,
   },
-  transaction_hash: '0x05d6589367633c032d757a69c5fb16c0e33e3994b0d9d1483f82aeee1f05d746',
+  tx_hash: '0x05d6589367633c032d757a69c5fb16c0e33e3994b0d9d1483f82aeee1f05d746',
   type: 'token_minting',
   timestamp: '2022-10-10T14:34:30.000000Z',
-  block_number: '12345',
   block_hash: '1',
   log_index: '1',
 };
@@ -147,7 +143,7 @@ export const erc1155A: TokenTransfer = {
 export const erc1155B: TokenTransfer = {
   ...erc1155A,
   token: {
-    ...(erc1155A.token as TokenInfo<'ERC-1155'>),
+    ...erc1155A.token,
     name: 'SastanaNFT',
     symbol: 'ipfs://QmUpFUfVKDCWeZQk5pvDFUxnpQP9N6eLSHhNUy49T1JVtY',
   },
@@ -157,7 +153,7 @@ export const erc1155B: TokenTransfer = {
 export const erc1155C: TokenTransfer = {
   ...erc1155A,
   token: {
-    ...(erc1155A.token as TokenInfo<'ERC-1155'>),
+    ...erc1155A.token,
     name: 'SastanaNFT',
     symbol: 'ipfs://QmUpFUfVKDCWeZQk5pvDFUxnpQP9N6eLSHhNUy49T1JVtY',
   },
@@ -167,7 +163,7 @@ export const erc1155C: TokenTransfer = {
 export const erc1155D: TokenTransfer = {
   ...erc1155A,
   token: {
-    ...(erc1155A.token as TokenInfo<'ERC-1155'>),
+    ...erc1155A.token,
     name: 'SastanaNFT',
     symbol: 'ipfs://QmUpFUfVKDCWeZQk5pvDFUxnpQP9N6eLSHhNUy49T1JVtY',
   },
@@ -214,11 +210,10 @@ export const erc404A: TokenTransfer = {
     decimals: '18',
     token_id: null,
   },
-  transaction_hash: '0x05d6589367633c032d757a69c5fb16c0e33e3994b0d9d1483f82aeee1f05d746',
+  tx_hash: '0x05d6589367633c032d757a69c5fb16c0e33e3994b0d9d1483f82aeee1f05d746',
   type: 'token_transfer',
   method: 'swap',
   timestamp: '2022-10-10T14:34:30.000000Z',
-  block_number: '12345',
   block_hash: '1',
   log_index: '1',
 };
@@ -226,7 +221,7 @@ export const erc404A: TokenTransfer = {
 export const erc404B: TokenTransfer = {
   ...erc404A,
   token: {
-    ...(erc404A.token as TokenInfo<'ERC-404'>),
+    ...erc404A.token,
     name: 'SastanaNFT',
     symbol: 'ipfs://QmUpFUfVKDCWeZQk5pvDFUxnpQP9N6eLSHhNUy49T1JVtY',
   },

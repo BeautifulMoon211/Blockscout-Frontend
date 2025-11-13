@@ -1,4 +1,4 @@
-import { Flex, Grid } from '@chakra-ui/react';
+import { Flex, Grid, Skeleton } from '@chakra-ui/react';
 import React from 'react';
 
 import type { TokenInfo, TokenInstance } from 'types/api/token';
@@ -7,7 +7,6 @@ import config from 'configs/app';
 import useIsMounted from 'lib/hooks/useIsMounted';
 import AppActionButton from 'ui/shared/AppActionButton/AppActionButton';
 import useAppActionData from 'ui/shared/AppActionButton/useAppActionData';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import * as DetailsInfoItem from 'ui/shared/DetailsInfoItem';
 import DetailsInfoItemDivider from 'ui/shared/DetailsInfoItemDivider';
@@ -111,12 +110,13 @@ const TokenInstanceDetails = ({ data, token, scrollRef, isLoading }: Props) => {
           ) }
         </Grid>
         <NftMedia
-          data={ data }
-          isLoading={ isLoading }
-          withFullscreen
+          animationUrl={ data.animation_url }
+          imageUrl={ data.image_url }
           w="250px"
           flexShrink={ 0 }
           alignSelf={{ base: 'center', lg: 'flex-start' }}
+          isLoading={ isLoading }
+          withFullscreen
         />
       </Flex>
       <Grid

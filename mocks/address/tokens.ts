@@ -184,27 +184,22 @@ const nftInstance = {
   value: '11',
 };
 
-const nftInstanceWithoutImage = {
-  ...nftInstance,
-  image_url: null,
-};
-
 export const collections: AddressCollectionsResponse = {
   items: [
     {
       token: tokens.tokenInfoERC1155a,
       amount: '100',
-      token_instances: Array(5).fill(nftInstanceWithoutImage),
+      token_instances: Array(5).fill(nftInstance),
     },
     {
       token: tokens.tokenInfoERC20LongSymbol,
       amount: '100',
-      token_instances: Array(5).fill(nftInstanceWithoutImage),
+      token_instances: Array(5).fill(nftInstance),
     },
     {
       token: tokens.tokenInfoERC1155WithoutName,
       amount: '1',
-      token_instances: [ nftInstanceWithoutImage ],
+      token_instances: [ nftInstance ],
     },
   ],
   next_page_params: {

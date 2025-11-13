@@ -12,13 +12,12 @@ import Pagination from 'ui/shared/pagination/Pagination';
 import useQueryWithPages from 'ui/shared/pagination/useQueryWithPages';
 
 import AddressCsvExportLink from './AddressCsvExportLink';
-import useAddressQuery from './utils/useAddressQuery';
 
-type Props = {
+type Props ={
   scrollRef?: React.RefObject<HTMLDivElement>;
   shouldRender?: boolean;
   isQueryEnabled?: boolean;
-};
+}
 
 const AddressLogs = ({ scrollRef, shouldRender = true, isQueryEnabled = true }: Props) => {
   const router = useRouter();
@@ -40,8 +39,6 @@ const AddressLogs = ({ scrollRef, shouldRender = true, isQueryEnabled = true }: 
     },
   });
 
-  const addressQuery = useAddressQuery({ hash });
-
   const actionBar = (
     <ActionBar mt={ -6 } showShadow justifyContent={{ base: 'space-between', lg: 'end' }}>
       <AddressCsvExportLink
@@ -57,15 +54,7 @@ const AddressLogs = ({ scrollRef, shouldRender = true, isQueryEnabled = true }: 
     return null;
   }
 
-  const content = data?.items ? data.items.map((item, index) => (
-    <LogItem
-      key={ index }
-      { ...item }
-      type="address"
-      isLoading={ isPlaceholderData }
-      defaultDataType={ addressQuery.data?.zilliqa?.is_scilla_contract ? 'UTF-8' : undefined }
-    />
-  )) : null;
+  const content = data?.items ? data.items.map((item, index) => <LogItem key={ index } { ...item } type="address" isLoading={ isPlaceholderData }/>) : null;
 
   return (
     <DataListDisplay

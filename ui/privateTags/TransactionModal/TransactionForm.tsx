@@ -3,9 +3,9 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
-import { useForm, FormProvider } from 'react-hook-form';
+import React, { useCallback, useState } from 'react';
+import type { SubmitHandler, ControllerRenderProps } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import type { TransactionTag, TransactionTagErrors } from 'types/api/account';
 
@@ -13,8 +13,9 @@ import type { ResourceErrorAccount } from 'lib/api/resources';
 import { resourceKey } from 'lib/api/resources';
 import useApiFetch from 'lib/api/useApiFetch';
 import getErrorMessage from 'lib/getErrorMessage';
-import FormFieldText from 'ui/shared/forms/fields/FormFieldText';
-import { TRANSACTION_HASH_LENGTH, TRANSACTION_HASH_REGEXP } from 'ui/shared/forms/validators/transaction';
+import { TRANSACTION_HASH_REGEXP } from 'lib/validations/transaction';
+import TagInput from 'ui/shared/TagInput';
+import TransactionInput from 'ui/shared/TransactionInput';
 
 const TAG_MAX_LENGTH = 35;
 
@@ -23,17 +24,17 @@ type Props = {
   onClose: () => void;
   onSuccess: () => Promise<void>;
   setAlertVisible: (isAlertVisible: boolean) => void;
-};
+}
 
 type Inputs = {
   transaction: string;
   tag: string;
-};
+}
 
 const TransactionForm: React.FC<Props> = ({ data, onClose, onSuccess, setAlertVisible }) => {
   const [ pending, setPending ] = useState(false);
 
-  const formApi = useForm<Inputs>({
+  const { control, handleSubmit, formState: { errors, isDirty }, setError } = useForm<Inputs>({
     mode: 'onTouched',
     defaultValues: {
       transaction: data?.transaction_hash || '',
@@ -44,7 +45,7 @@ const TransactionForm: React.FC<Props> = ({ data, onClose, onSuccess, setAlertVi
   const queryClient = useQueryClient();
   const apiFetch = useApiFetch();
 
-  const { mutateAsync } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: (formData: Inputs) => {
       const body = {
         name: formData?.tag,
@@ -54,7 +55,7 @@ const TransactionForm: React.FC<Props> = ({ data, onClose, onSuccess, setAlertVi
 
       if (isEdit) {
         return apiFetch('private_tags_tx', {
-          pathParams: { id: String(data.id) },
+          pathParams: { id: data.id },
           fetchParams: { method: 'PUT', body },
         });
       }
@@ -64,11 +65,11 @@ const TransactionForm: React.FC<Props> = ({ data, onClose, onSuccess, setAlertVi
     onError: (error: ResourceErrorAccount<TransactionTagErrors>) => {
       setPending(false);
       const errorMap = error.payload?.errors;
-      if (errorMap?.transaction_hash || errorMap?.name) {
-        errorMap?.transaction_hash && formApi.setError('transaction', { type: 'custom', message: getErrorMessage(errorMap, 'transaction_hash') });
-        errorMap?.name && formApi.setError('tag', { type: 'custom', message: getErrorMessage(errorMap, 'name') });
+      if (errorMap?.tx_hash || errorMap?.name) {
+        errorMap?.tx_hash && setError('transaction', { type: 'custom', message: getErrorMessage(errorMap, 'tx_hash') });
+        errorMap?.name && setError('tag', { type: 'custom', message: getErrorMessage(errorMap, 'name') });
       } else if (errorMap?.identity_id) {
-        formApi.setError('transaction', { type: 'custom', message: getErrorMessage(errorMap, 'identity_id') });
+        setError('transaction', { type: 'custom', message: getErrorMessage(errorMap, 'identity_id') });
       } else {
         setAlertVisible(true);
       }
@@ -81,47 +82,54 @@ const TransactionForm: React.FC<Props> = ({ data, onClose, onSuccess, setAlertVi
     },
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async(formData) => {
+  const onSubmit: SubmitHandler<Inputs> = formData => {
     setPending(true);
-    await mutateAsync(formData);
+    mutate(formData);
   };
 
+  const renderTransactionInput = useCallback(({ field }: {field: ControllerRenderProps<Inputs, 'transaction'>}) => {
+    return <TransactionInput field={ field } error={ errors.transaction } bgColor="dialog_bg"/>;
+  }, [ errors ]);
+
+  const renderTagInput = useCallback(({ field }: {field: ControllerRenderProps<Inputs, 'tag'>}) => {
+    return <TagInput<Inputs, 'tag'> field={ field } error={ errors.tag } bgColor="dialog_bg"/>;
+  }, [ errors ]);
+
   return (
-    <FormProvider { ...formApi }>
-      <form noValidate onSubmit={ formApi.handleSubmit(onSubmit) }>
-        <FormFieldText<Inputs>
+    <form noValidate onSubmit={ handleSubmit(onSubmit) }>
+      <Box marginBottom={ 5 }>
+        <Controller
           name="transaction"
-          placeholder="Transaction hash (0x...)"
-          isRequired
+          control={ control }
           rules={{
-            maxLength: TRANSACTION_HASH_LENGTH,
             pattern: TRANSACTION_HASH_REGEXP,
+            required: true,
           }}
-          bgColor="dialog_bg"
-          mb={ 5 }
+          render={ renderTransactionInput }
         />
-        <FormFieldText<Inputs>
+      </Box>
+      <Box marginBottom={ 8 }>
+        <Controller
           name="tag"
-          placeholder="Private tag (max 35 characters)"
-          isRequired
+          control={ control }
           rules={{
             maxLength: TAG_MAX_LENGTH,
+            required: true,
           }}
-          bgColor="dialog_bg"
-          mb={ 8 }
+          render={ renderTagInput }
         />
-        <Box marginTop={ 8 }>
-          <Button
-            size="lg"
-            type="submit"
-            isDisabled={ !formApi.formState.isDirty }
-            isLoading={ pending }
-          >
-            { data ? 'Save changes' : 'Add tag' }
-          </Button>
-        </Box>
-      </form>
-    </FormProvider>
+      </Box>
+      <Box marginTop={ 8 }>
+        <Button
+          size="lg"
+          type="submit"
+          isDisabled={ !isDirty }
+          isLoading={ pending }
+        >
+          { data ? 'Save changes' : 'Add tag' }
+        </Button>
+      </Box>
+    </form>
   );
 };
 

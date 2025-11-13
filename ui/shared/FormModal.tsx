@@ -19,7 +19,7 @@ interface Props<TData> {
   data?: TData;
   title: string;
   text?: string;
-  renderForm: () => React.JSX.Element;
+  renderForm: () => JSX.Element;
   isAlertVisible?: boolean;
   setAlertVisible?: (isAlertVisible: boolean) => void;
 }

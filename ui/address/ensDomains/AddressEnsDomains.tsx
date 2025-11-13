@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Show,
+  Skeleton,
   useDisclosure,
   chakra,
 } from '@chakra-ui/react';
@@ -22,7 +23,6 @@ import { route } from 'nextjs-routes';
 import type { ResourceError } from 'lib/api/resources';
 import dayjs from 'lib/date/dayjs';
 import Popover from 'ui/shared/chakra/Popover';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
@@ -42,7 +42,7 @@ const DomainsGrid = ({ data }: { data: Array<bens.Domain> }) => {
       rowGap={ 4 }
       mt={ 2 }
     >
-      { data.slice(0, 9).map((domain) => <EnsEntity key={ domain.id } domain={ domain.name } protocol={ domain.protocol } noCopy/>) }
+      { data.slice(0, 9).map((domain) => <EnsEntity key={ domain.id } name={ domain.name } protocol={ domain.protocol } noCopy/>) }
     </Grid>
   );
 };
@@ -126,7 +126,7 @@ const AddressEnsDomains = ({ query, addressHash, mainDomainName }: Props) => {
             <Box w="100%">
               <chakra.span color="text_secondary" fontSize="xs">Primary*</chakra.span>
               <Flex alignItems="center" fontSize="md" mt={ 2 }>
-                <EnsEntity domain={ mainDomain.name } protocol={ mainDomain.protocol } fontWeight={ 600 } noCopy/>
+                <EnsEntity name={ mainDomain.name } protocol={ mainDomain.protocol } fontWeight={ 600 } noCopy/>
                 { mainDomain.expiry_date &&
                     <chakra.span color="text_secondary" whiteSpace="pre"> (expires { dayjs(mainDomain.expiry_date).fromNow() })</chakra.span> }
               </Flex>

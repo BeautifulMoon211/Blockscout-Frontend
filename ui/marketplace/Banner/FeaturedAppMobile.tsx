@@ -1,10 +1,8 @@
-import { IconButton, Image, Link, LinkBox, useColorModeValue, Flex } from '@chakra-ui/react';
+import { IconButton, Image, Link, LinkBox, Skeleton, useColorModeValue, Flex } from '@chakra-ui/react';
 import type { MouseEvent } from 'react';
 import React from 'react';
 
 import type { MarketplaceAppPreview } from 'types/client/marketplace';
-
-import Skeleton from 'ui/shared/chakra/Skeleton';
 
 import FavoriteIcon from '../FavoriteIcon';
 import MarketplaceAppCardLink from '../MarketplaceAppCardLink';

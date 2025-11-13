@@ -24,10 +24,6 @@ const Deposits = dynamic(() => {
     return import('ui/pages/ZkEvmL2Deposits');
   }
 
-  if (rollupFeature.isEnabled && rollupFeature.type === 'scroll') {
-    return import('ui/pages/ScrollL2Deposits');
-  }
-
   throw new Error('Deposits feature is not enabled.');
 }, { ssr: false });
 

@@ -1,8 +1,7 @@
-import { Box, Flex, chakra, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, chakra, useColorModeValue, Skeleton } from '@chakra-ui/react';
 import clamp from 'lodash/clamp';
 import React from 'react';
 
-import Skeleton from 'ui/shared/chakra/Skeleton';
 interface Props {
   className?: string;
   value: number;

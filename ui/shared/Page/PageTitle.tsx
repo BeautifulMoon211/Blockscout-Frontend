@@ -1,10 +1,9 @@
-import { Heading, Flex, Tooltip, Link, chakra, useDisclosure } from '@chakra-ui/react';
+import { Heading, Flex, Tooltip, Link, chakra, Skeleton, useDisclosure } from '@chakra-ui/react';
 import _debounce from 'lodash/debounce';
 import React from 'react';
 
 import useIsMobile from 'lib/hooks/useIsMobile';
 import TextAd from 'ui/shared/ad/TextAd';
-import Skeleton from 'ui/shared/chakra/Skeleton';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
 
@@ -20,7 +19,7 @@ type Props = {
   secondRow?: React.ReactNode;
   isLoading?: boolean;
   withTextAd?: boolean;
-};
+}
 
 const TEXT_MAX_LINES = 1;
 
@@ -155,9 +154,9 @@ const PageTitle = ({ title, contentAfter, withTextAd, backLink, className, isLoa
         { withTextAd && <TextAd order={{ base: -1, lg: 100 }} mb={{ base: 6, lg: 0 }} ml="auto" w={{ base: '100%', lg: 'auto' }}/> }
       </Flex>
       { secondRow && (
-        <Skeleton isLoaded={ !isLoading } alignItems="center" minH={ 10 } overflow="hidden" display="flex" _empty={{ display: 'none' }}>
+        <Flex alignItems="center" minH={ 10 } overflow="hidden" _empty={{ display: 'none' }}>
           { secondRow }
-        </Skeleton>
+        </Flex>
       ) }
     </Flex>
   );

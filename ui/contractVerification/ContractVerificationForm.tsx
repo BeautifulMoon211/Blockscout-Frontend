@@ -1,4 +1,4 @@
-import { Button, Grid, Text, chakra, useUpdateEffect } from '@chakra-ui/react';
+import { Button, Grid, chakra, useUpdateEffect } from '@chakra-ui/react';
 import React from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -11,7 +11,6 @@ import type { SmartContractVerificationConfig } from 'types/client/contract';
 import { route } from 'nextjs-routes';
 
 import useApiFetch from 'lib/api/useApiFetch';
-import capitalizeFirstLetter from 'lib/capitalizeFirstLetter';
 import delay from 'lib/delay';
 import getErrorObjStatusCode from 'lib/errors/getErrorObjStatusCode';
 import useToast from 'lib/hooks/useToast';
@@ -28,7 +27,6 @@ import ContractVerificationSolidityFoundry from './methods/ContractVerificationS
 import ContractVerificationSolidityHardhat from './methods/ContractVerificationSolidityHardhat';
 import ContractVerificationSourcify from './methods/ContractVerificationSourcify';
 import ContractVerificationStandardInput from './methods/ContractVerificationStandardInput';
-import ContractVerificationStylusGitHubRepo from './methods/ContractVerificationStylusGitHubRepo';
 import ContractVerificationVyperContract from './methods/ContractVerificationVyperContract';
 import ContractVerificationVyperMultiPartFile from './methods/ContractVerificationVyperMultiPartFile';
 import ContractVerificationVyperStandardInput from './methods/ContractVerificationVyperStandardInput';
@@ -43,9 +41,9 @@ interface Props {
 const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Props) => {
   const formApi = useForm<FormFields>({
     mode: 'onBlur',
-    defaultValues: getDefaultValues(methodFromQuery, config, hash, null),
+    defaultValues: methodFromQuery ? getDefaultValues(methodFromQuery, config, hash, null) : undefined,
   });
-  const { handleSubmit, watch, formState, setError, reset, getFieldState, getValues, clearErrors } = formApi;
+  const { control, handleSubmit, watch, formState, setError, reset, getFieldState } = formApi;
   const submitPromiseResolver = React.useRef<(value: unknown) => void>();
   const methodNameRef = React.useRef<string>();
 
@@ -91,26 +89,13 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
     });
   }, [ apiFetch, hash, setError ]);
 
-  const handleFormChange = React.useCallback(() => {
-    clearErrors('root');
-  }, [ clearErrors ]);
-
   const address = watch('address');
   const addressState = getFieldState('address');
 
   const handleNewSocketMessage: SocketMessage.ContractVerification['handler'] = React.useCallback(async(payload) => {
     if (payload.status === 'error') {
       const errors = formatSocketErrors(payload.errors);
-
-      const existingErrors = errors.filter(Boolean).filter(([ field ]) => getValues(field));
-      if (existingErrors.length) {
-        existingErrors.forEach(([ field, error ]) => setError(field, error));
-      } else {
-        const globalErrors = Object.entries(payload.errors).map(([ , value ]) => value.join(', '));
-        const rootError = capitalizeFirstLetter(globalErrors.join('\n\n'));
-        setError('root', { message: rootError });
-      }
-
+      errors.filter(Boolean).forEach(([ field, error ]) => setError(field, error));
       await delay(100); // have to wait a little bit, otherwise isSubmitting status will not be updated
       submitPromiseResolver.current?.(null);
       return;
@@ -132,7 +117,7 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
     );
 
     window.location.assign(route({ pathname: '/address/[hash]', query: { hash: address, tab: 'contract' } }));
-  }, [ setError, toast, address, getValues ]);
+  }, [ setError, toast, address ]);
 
   const handleSocketError = React.useCallback(() => {
     if (!formState.isSubmitting) {
@@ -160,7 +145,7 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
     topic: `addresses:${ address?.toLowerCase() }`,
     onSocketClose: handleSocketError,
     onSocketError: handleSocketError,
-    isDisabled: !address || Boolean(address && addressState.error),
+    isDisabled: Boolean(address && addressState.error),
   });
   useSocketMessage({
     channel,
@@ -179,7 +164,6 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
       'vyper-standard-input': <ContractVerificationVyperStandardInput/>,
       'solidity-hardhat': <ContractVerificationSolidityHardhat config={ config }/>,
       'solidity-foundry': <ContractVerificationSolidityFoundry/>,
-      'stylus-github-repository': <ContractVerificationStylusGitHubRepo/>,
     };
   }, [ config ]);
   const method = watch('method');
@@ -203,15 +187,17 @@ const ContractVerificationForm = ({ method: methodFromQuery, config, hash }: Pro
       <chakra.form
         noValidate
         onSubmit={ handleSubmit(onFormSubmit) }
-        onChange={ handleFormChange }
       >
         <Grid as="section" columnGap="30px" rowGap={{ base: 2, lg: 5 }} templateColumns={{ base: '1fr', lg: 'minmax(auto, 680px) minmax(0, 340px)' }}>
           { !hash && <ContractVerificationFieldAddress/> }
           <ContractVerificationFieldLicenseType/>
-          <ContractVerificationFieldMethod methods={ config.verification_options }/>
+          <ContractVerificationFieldMethod
+            control={ control }
+            methods={ config.verification_options }
+            isDisabled={ formState.isSubmitting }
+          />
         </Grid>
         { content }
-        { formState.errors.root?.message && <Text color="error"mt={ 4 } fontSize="sm" whiteSpace="pre-wrap">{ formState.errors.root.message }</Text> }
         { Boolean(method) && method.value !== 'solidity-hardhat' && method.value !== 'solidity-foundry' && (
           <Button
             variant="solid"

@@ -1,21 +1,17 @@
-import { Box, Button, Flex, FormControl, Input, InputGroup, InputRightElement, chakra, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, FormControl, Input, InputGroup, InputRightElement, chakra, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
 import type { ContractAbiItemInput } from '../types';
 
-import { HOUR, SECOND } from 'lib/consts';
 import ClearButton from 'ui/shared/ClearButton';
 
-import ContractMethodAddressButton from './ContractMethodAddressButton';
 import ContractMethodFieldLabel from './ContractMethodFieldLabel';
 import ContractMethodMultiplyButton from './ContractMethodMultiplyButton';
 import useFormatFieldValue from './useFormatFieldValue';
 import useValidateField from './useValidateField';
 import { matchInt } from './utils';
-
-const TIMESTAMP_BUTTON_REGEXP = /time|deadline|expiration|expiry/i;
 
 interface Props {
   data: ContractAbiItemInput;
@@ -34,7 +30,6 @@ const ContractMethodFieldInput = ({ data, hideLabel, path: name, className, isDi
   const isOptional = isOptionalProp || isNativeCoin;
 
   const argTypeMatchInt = React.useMemo(() => matchInt(data.type), [ data.type ]);
-  const hasTimestampButton = React.useMemo(() => TIMESTAMP_BUTTON_REGEXP.test(data.name || ''), [ data.name ]);
   const validate = useValidateField({ isOptional, argType: data.type, argTypeMatchInt });
   const format = useFormatFieldValue({ argType: data.type, argTypeMatchInt });
 
@@ -61,27 +56,8 @@ const ContractMethodFieldInput = ({ data, hideLabel, path: name, className, isDi
     const zeroes = Array(power).fill('0').join('');
     const value = getValues(name);
     const newValue = format(value ? value + zeroes : '1' + zeroes);
-    setValue(name, newValue, { shouldValidate: true });
+    setValue(name, newValue);
   }, [ format, getValues, name, setValue ]);
-
-  const handleMaxIntButtonClick = React.useCallback(() => {
-    if (!argTypeMatchInt) {
-      return;
-    }
-
-    const newValue = format(argTypeMatchInt.max.toString());
-    setValue(name, newValue, { shouldValidate: true });
-  }, [ format, name, setValue, argTypeMatchInt ]);
-
-  const handleAddressButtonClick = React.useCallback((address: string) => {
-    const newValue = format(address);
-    setValue(name, newValue, { shouldValidate: true });
-  }, [ format, name, setValue ]);
-
-  const handleTimestampButtonClick = React.useCallback(() => {
-    const newValue = format(String(Math.floor((Date.now() + HOUR) / SECOND)));
-    setValue(name, newValue, { shouldValidate: true });
-  }, [ format, name, setValue ]);
 
   const error = fieldState.error;
 
@@ -114,40 +90,11 @@ const ContractMethodFieldInput = ({ data, hideLabel, path: name, className, isDi
             isInvalid={ Boolean(error) }
             placeholder={ data.type }
             autoComplete="off"
-            data-1p-ignore
             bgColor={ inputBgColor }
             paddingRight={ hasMultiplyButton ? '120px' : '40px' }
           />
-          <InputRightElement w="auto" right={ 1 } bgColor={ inputBgColor } h="calc(100% - 4px)" top="2px" borderRadius="base">
+          <InputRightElement w="auto" right={ 1 }>
             { field.value !== undefined && field.value !== '' && <ClearButton onClick={ handleClear } isDisabled={ isDisabled }/> }
-            { data.type === 'address' && <ContractMethodAddressButton onClick={ handleAddressButtonClick } isDisabled={ isDisabled }/> }
-            { argTypeMatchInt && !isNativeCoin && (hasTimestampButton ? (
-              <Button
-                variant="subtle"
-                colorScheme="gray"
-                size="xs"
-                fontSize="normal"
-                fontWeight={ 500 }
-                ml={ 1 }
-                onClick={ handleTimestampButtonClick }
-                isDisabled={ isDisabled }
-              >
-                Now+1h
-              </Button>
-            ) : (
-              <Button
-                variant="subtle"
-                colorScheme="gray"
-                size="xs"
-                fontSize="normal"
-                fontWeight={ 500 }
-                ml={ 1 }
-                onClick={ handleMaxIntButtonClick }
-                isDisabled={ isDisabled }
-              >
-                Max
-              </Button>
-            )) }
             { hasMultiplyButton && <ContractMethodMultiplyButton onClick={ handleMultiplyButtonClick } isDisabled={ isDisabled }/> }
           </InputRightElement>
         </InputGroup>

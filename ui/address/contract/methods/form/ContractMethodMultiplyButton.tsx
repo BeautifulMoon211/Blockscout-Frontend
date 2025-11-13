@@ -9,7 +9,6 @@ import {
   ListItem,
   useDisclosure,
   Input,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import React from 'react';
 
@@ -26,8 +25,6 @@ const ContractMethodMultiplyButton = ({ onClick, isDisabled }: Props) => {
   const [ selectedOption, setSelectedOption ] = React.useState<number | undefined>(18);
   const [ customValue, setCustomValue ] = React.useState<number>();
   const { isOpen, onToggle, onClose } = useDisclosure();
-
-  const dividerColor = useColorModeValue('blackAlpha.200', 'whiteAlpha.200');
 
   const handleOptionClick = React.useCallback((event: React.MouseEvent) => {
     const id = Number((event.currentTarget as HTMLDivElement).getAttribute('data-id'));
@@ -63,8 +60,6 @@ const ContractMethodMultiplyButton = ({ onClick, isDisabled }: Props) => {
           display="inline"
           onClick={ handleButtonClick }
           isDisabled={ isDisabled }
-          borderBottomRightRadius={ 0 }
-          borderTopRightRadius={ 0 }
         >
           { times }
           <chakra.span>10</chakra.span>
@@ -78,14 +73,11 @@ const ContractMethodMultiplyButton = ({ onClick, isDisabled }: Props) => {
             colorScheme="gray"
             size="xs"
             cursor="pointer"
+            ml={ 1 }
             p={ 0 }
             onClick={ onToggle }
             isActive={ isOpen }
             isDisabled={ isDisabled }
-            borderBottomLeftRadius={ 0 }
-            borderTopLeftRadius={ 0 }
-            borderLeftWidth="1px"
-            borderLeftColor={ dividerColor }
           >
             <IconSvg
               name="arrows/east-mini"
@@ -113,7 +105,7 @@ const ContractMethodMultiplyButton = ({ onClick, isDisabled }: Props) => {
                     cursor="pointer"
                   >
                     <span>10*{ id }</span>
-                    { selectedOption === id && <IconSvg name="check" boxSize={ 6 } color="blue.600"/> }
+                    { selectedOption === id && <IconSvg name="check" boxSize={ 6 } color="#4361ee"/> }
                   </ListItem>
                 )) }
                 <ListItem

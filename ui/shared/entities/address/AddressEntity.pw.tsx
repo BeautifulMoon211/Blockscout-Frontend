@@ -1,29 +1,24 @@
 import { Box } from '@chakra-ui/react';
-import type { BrowserContext } from '@playwright/test';
 import React from 'react';
 
-import config from 'configs/app';
 import { AddressHighlightProvider } from 'lib/contexts/addressHighlight';
-import * as cookies from 'lib/cookies';
 import * as addressMock from 'mocks/address/address';
 import * as implementationsMock from 'mocks/address/implementations';
-import * as metadataMock from 'mocks/metadata/address';
-import { ENVS_MAP } from 'playwright/fixtures/mockEnvs';
 import { test, expect } from 'playwright/lib';
 
 import AddressEntity from './AddressEntity';
 
-const iconSizes = [ 'md', 'lg' ] as const;
+const iconSizes = [ 'md', 'lg' ];
 
 test.use({ viewport: { width: 180, height: 140 } });
 
 test.describe('icon size', () => {
   iconSizes.forEach((size) => {
-    test(`${ size }`, async({ render }) => {
+    test(size, async({ render }) => {
       const component = await render(
         <AddressEntity
           address={ addressMock.withoutName }
-          icon={{ size }}
+          iconSize={ size }
         />,
       );
 
@@ -73,7 +68,7 @@ test.describe('proxy contract', () => {
   test('without implementation name', async({ render, page }) => {
     const component = await render(
       <AddressEntity
-        address={{ ...addressMock.contract, implementations: [ { address: addressMock.contract.implementations?.[0].address as string } ] }}
+        address={{ ...addressMock.contract, implementations: [ { address: addressMock.contract.implementations?.[0].address } ] }}
       />,
     );
 
@@ -85,7 +80,7 @@ test.describe('proxy contract', () => {
   test('without any name', async({ render, page }) => {
     const component = await render(
       <AddressEntity
-        address={{ ...addressMock.contract, name: undefined, implementations: [ { address: addressMock.contract.implementations?.[0].address as string } ] }}
+        address={{ ...addressMock.contract, name: undefined, implementations: [ { address: addressMock.contract.implementations?.[0].address } ] }}
       />,
     );
 
@@ -102,18 +97,6 @@ test.describe('proxy contract', () => {
     );
 
     await component.getByText(/eternal/i).hover();
-    await expect(page.getByText('Proxy contract')).toBeVisible();
-    await expect(page).toHaveScreenshot();
-  });
-
-  test('with name tag', async({ render, page }) => {
-    const component = await render(
-      <AddressEntity
-        address={{ ...addressMock.contract, metadata: { reputation: 1, tags: [ metadataMock.nameTag ] } }}
-      />,
-    );
-
-    await component.getByText(/quack/i).hover();
     await expect(page.getByText('Proxy contract')).toBeVisible();
     await expect(page).toHaveScreenshot();
   });
@@ -193,7 +176,7 @@ test('customization', async({ render }) => {
       truncation="constant"
       p={ 3 }
       borderWidth="1px"
-      borderColor="blue.700"
+      borderColor="#3f37c9"
     />,
   );
 
@@ -213,22 +196,4 @@ test('hover', async({ page, render }) => {
 
   await component.getByText(addressMock.hash.slice(0, 4)).hover();
   await expect(page).toHaveScreenshot();
-});
-
-const bech32test = test.extend<{ context: BrowserContext }>({
-  context: async({ context }, use) => {
-    context.addCookies([ { name: cookies.NAMES.ADDRESS_FORMAT, value: 'bech32', domain: config.app.host, path: '/' } ]);
-    use(context);
-  },
-});
-
-bech32test('bech32 format', async({ render, mockEnvs }) => {
-  await mockEnvs(ENVS_MAP.addressBech32Format);
-  const component = await render(
-    <AddressEntity
-      address={ addressMock.withoutName }
-    />,
-  );
-
-  await expect(component).toHaveScreenshot();
 });

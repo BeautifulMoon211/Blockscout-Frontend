@@ -56,9 +56,11 @@ const ContractVerificationFieldLibraries = () => {
         <ContractVerificationFieldLibraryItem
           key={ field.id }
           index={ index }
+          control={ control }
           fieldsLength={ fields.length }
           onAddFieldClick={ handleAddFieldClick }
           onRemoveFieldClick={ handleRemoveFieldClick }
+          error={ 'libraries' in formState.errors ? formState.errors.libraries?.[index] : undefined }
           isDisabled={ formState.isSubmitting }
         />
       )) }
